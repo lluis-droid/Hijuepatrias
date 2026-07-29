@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evidencias — Unidad Centinela</title>
+    <link rel="stylesheet" href="stylescaso1.css">
+</head>
+<body>
+    <div class="vignette"></div>
+    <div class="noise"></div>
+
+    <div class="notebook">
+        <div class="tape"></div>
+        <div class="watermark">HIJUEPATRIAS</div>
+        <div class="stamp">confidencial</div>
+
+        <div class="logo-bar">
+            <img src="logo.png" alt="">
+            <span>hijuepatrias · inteligencia &amp; estrategia</span>
+        </div>
+
+        <div class="case-header">
+            <h1>Evidencias del Caso</h1>
+            <div class="case-number">— Unidad Centinela —</div>
+        </div>
+
+        <a href="expedientecaso2.html" class="back-link">← Volver al expediente</a>
+
+        <div class="notebook-content">
+            <div class="evidence-grid" id="evidenceGrid"></div>
+        </div>
+
+        <div class="footer-note">— hijuepatrias · Evidencia clasificada —</div>
+    </div>
+
+    <script src="datacaso2.js"></script>
+    <script src="scriptcaso2.js"></script>
+    <script>
+        (function() {
+            var grid = document.getElementById('evidenceGrid');
+            CASO2.evidences.forEach(function(ev) {
+                var card = document.createElement('a');
+                card.className = 'evidence-card locked';
+                card.href = 'evidencia' + ev.id + 'caso2.html';
+                card.innerHTML =
+                    '<span class="status-icon"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>' +
+                    '<h3>EVIDENCIA ' + ev.id + '</h3>' +
+                    '<span class="status-label locked-label">Sellada</span>';
+                grid.appendChild(card);
+            });
+        })();
+    </script>
+</body>
+</html>

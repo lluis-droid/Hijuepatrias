@@ -1,18 +1,9 @@
 function getEvidencia(id) {
-  return CASO1.evidences.find(function(e) { return e.id === id; });
+  return CASO2.evidences.find(function(e) { return e.id === id; });
 }
 
 function getSospechoso(id) {
-  return CASO1.suspects.find(function(s) { return s.id === id; });
-}
-
-/* ===== Persistencia (localStorage) ===== */
-function isUnlocked(evId) {
-  return localStorage.getItem('caso1_ev_' + evId) === 'true';
-}
-
-function setUnlocked(evId) {
-  localStorage.setItem('caso1_ev_' + evId, 'true');
+  return CASO2.suspects.find(function(s) { return s.id === id; });
 }
 
 /* ===== Lightbox ===== */
@@ -94,7 +85,7 @@ function openModal(id, cardEl, num) {
     overlay.style.setProperty('--origin-y', '0px');
   }
 
-  var imgSrc = 'assets/caso1/sospechosos/' + s.id + '.png';
+  var imgSrc = 'assets/caso2/sospechosos/' + s.id + '.png';
   var avatarEl = document.getElementById('modalAvatar');
   avatarEl.src = imgSrc;
   avatarEl.alt = s.nombre;
@@ -128,18 +119,10 @@ function setupVault(evId) {
   var btn = document.getElementById('unlockBtn');
   var errorEl = document.getElementById('vaultError');
 
-  if (isUnlocked(evId)) {
-    vaultScreen.style.display = 'none';
-    contentArea.classList.add('revealed');
-    renderEvidence(ev, contentArea);
-    return;
-  }
-
   function tryUnlock() {
     var val = input ? input.value.trim().toUpperCase() : '';
     if (val === ev.keyword) {
       errorEl.classList.remove('show');
-      setUnlocked(evId);
       vaultScreen.classList.add('glitch');
       setTimeout(function() {
         vaultScreen.style.display = 'none';
@@ -168,7 +151,6 @@ function setupVault(evId) {
 
 function renderEvidence(ev, container) {
   if (ev.type === 'email') renderEmail(ev, container);
-  else if (ev.type === 'chat') renderChat(ev, container);
   else if (ev.type === 'log') renderLog(ev, container);
   else if (ev.type === 'documento') renderDocumento(ev, container);
 }
@@ -190,24 +172,12 @@ function iconMore() {
   return '<svg viewBox="0 0 24 24" width="14" height="14" class="icon-svg"><circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="19" r="1.5"/></svg>';
 }
 
-function iconSmiley() {
-  return '<svg viewBox="0 0 24 24" width="20" height="20" class="icon-svg"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>';
-}
-
-function iconMic() {
-  return '<svg viewBox="0 0 24 24" width="20" height="20" class="icon-svg"><rect x="9" y="2" width="6" height="11" rx="3"/><path d="M5 10a7 7 0 0 0 14 0"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>';
-}
-
 function iconWarning() {
   return '<svg viewBox="0 0 24 24" width="14" height="14" class="icon-svg"><path d="M12 2L2 22h20L12 2z"/><line x1="12" y1="10" x2="12" y2="16"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>';
 }
 
 function iconLock() {
   return '<svg viewBox="0 0 24 24" width="32" height="32" class="icon-svg"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>';
-}
-
-function iconLockOpen() {
-  return '<svg viewBox="0 0 24 24" width="32" height="32" class="icon-svg"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a2 2 0 0 1 3.75-.94"/><line x1="17.5" y1="8.5" x2="20" y2="6"/><line x1="20" y1="6" x2="22.5" y2="8.5"/></svg>';
 }
 
 /* ===== Gmail-style email ===== */
@@ -264,49 +234,6 @@ function renderEmail(ev, container) {
   }
   html += '</div></div></div></div>';
   container.innerHTML = html;
-}
-
-/* ===== WhatsApp-style chat ===== */
-function renderChat(ev, container) {
-  var html = '<div class="whatsapp-view">';
-  html += '<div class="wa-header">';
-  html += '<span class="wa-back">' + iconReply() + '</span>';
-  html += '<span class="wa-avatar">';
-  html += ev.group.charAt(0).toUpperCase();
-  html += '</span>';
-  html += '<div class="wa-contact-info">';
-  html += '<div class="wa-contact-name">' + ev.group + '</div>';
-  html += '<div class="wa-status">en l\u00ednea</div>';
-  html += '</div>';
-  html += '<span class="wa-menu">' + iconMore() + '</span>';
-  html += '</div>';
-  html += '<div class="wa-chat">';
-  html += '<div class="wa-date-divider">14 de marzo</div>';
-  ev.messages.forEach(function(m) {
-    var cls = m.from === 'Rector E.' ? 'sent' : 'received';
-    html += '<div class="bubble ' + cls + '">';
-    if (cls === 'received') {
-      html += '<div class="bubble-author">' + m.from + '</div>';
-    }
-    html += m.text;
-    html += '<div class="bubble-time">' + m.time + '</div>';
-    if (cls === 'sent') {
-      html += '<span class="bubble-check">' + iconCheck() + '</span>';
-    }
-    html += '</div>';
-  });
-  html += '</div>';
-  html += '<div class="wa-input">';
-  html += '<span class="wa-emoji">' + iconSmiley() + '</span>';
-  html += '<input type="text" placeholder="Escribe un mensaje" disabled>';
-  html += '<span class="wa-mic">' + iconMic() + '</span>';
-  html += '</div>';
-  html += '</div>';
-  container.innerHTML = html;
-}
-
-function iconCheck() {
-  return '<svg viewBox="0 0 24 24" width="14" height="14" class="icon-svg"><polyline points="2 14 8 20 22 4" stroke-width="2.5"/></svg>';
 }
 
 /* ===== Log table ===== */
@@ -374,7 +301,7 @@ function renderDocumento(ev, container) {
       html += '<div class="wiki-highlight-box">';
       html += '<p>' + section.content.replace(/\n/g, '<br>') + '</p>';
       html += '</div>';
-    } else {
+    } else if (section.content) {
       html += '<p>' + section.content.replace(/\n/g, '<br>') + '</p>';
     }
     if (section.table) {
@@ -394,13 +321,6 @@ function renderDocumento(ev, container) {
         });
         html += '</tr>';
       });
-      if (section.table.footer) {
-        html += '<tfoot><tr>';
-        section.table.footer.forEach(function(cell) {
-          html += '<td>' + cell + '</td>';
-        });
-        html += '</tr></tfoot>';
-      }
       html += '</tbody></table>';
       html += '</div>';
     }
@@ -418,8 +338,8 @@ function renderDocumento(ev, container) {
 
 /* ===== Console easter egg ===== */
 console.log('%c[ARCHIVO DEL CASO]', 'color:#8b2020;font-weight:bold;font-size:13px;');
-console.log('%cExpediente N° 001 — Campus Digital', 'color:#5a4a2a;font-style:italic;font-size:11px;');
-console.log('%cNOTA: Revisar el salto de 40 minutos en la bit\u00e1cora de c\u00e1maras (Evidencia 3).', 'color:#2a1a0a;font-size:11px;');
+console.log('%cExpediente N° 002 — Unidad Centinela', 'color:#5a4a2a;font-style:italic;font-size:11px;');
+console.log('%cNOTA: El cambio de turno en la bit\u00e1cora (Evidencia 3) no coincide con el horario habitual.', 'color:#2a1a0a;font-size:11px;');
 
 /* ===== Easter egg NOCHAP ===== */
 (function() {
