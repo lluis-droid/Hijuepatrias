@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CASO N° ████</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Special+Elite&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            background: #1a1a1a;
+            font-family: 'Special Elite', 'Courier New', monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background:
+                repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px),
+                repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(0,0,0,0.02) 2px, rgba(0,0,0,0.02) 4px);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(ellipse at 20% 50%, rgba(101, 67, 33, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 50%, rgba(139, 90, 43, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .vignette {
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.7) 100%);
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .noise {
+            position: fixed;
+            inset: 0;
+            opacity: 0.04;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+            background-repeat: repeat;
+            background-size: 256px 256px;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .notebook {
+            background: #f4e8c1;
+            background-image:
+                linear-gradient(90deg, transparent 39px, #e8d8a8 39px, #e8d8a8 41px, transparent 41px),
+                repeating-linear-gradient(0deg, transparent, transparent 27px, rgba(180, 160, 120, 0.15) 27px, rgba(180, 160, 120, 0.15) 28px);
+            width: 520px;
+            max-width: 92vw;
+            padding: 50px 50px 50px 70px;
+            position: relative;
+            box-shadow:
+                0 20px 60px rgba(0,0,0,0.8),
+                0 0 0 1px rgba(0,0,0,0.3),
+                0 0 0 2px #3a2a1a,
+                0 0 0 3px rgba(0,0,0,0.2);
+            z-index: 3;
+            transform: rotate(-0.3deg);
+        }
+
+        .notebook::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background:
+                repeating-linear-gradient(0deg, transparent, transparent 27px, rgba(120, 100, 70, 0.08) 27px, rgba(120, 100, 70, 0.08) 28px);
+            pointer-events: none;
+        }
+
+        .notebook::after {
+            content: '✦';
+            position: absolute;
+            bottom: 15px;
+            right: 20px;
+            font-size: 14px;
+            color: rgba(0,0,0,0.12);
+        }
+
+        .tape {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%) rotate(-0.5deg);
+            width: 100px;
+            height: 25px;
+            background: rgba(200, 180, 140, 0.5);
+            border: 1px solid rgba(0,0,0,0.1);
+            opacity: 0.7;
+        }
+
+        .case-header {
+            position: relative;
+            margin-bottom: 35px;
+        }
+
+        .case-header h1 {
+            font-size: 22px;
+            color: #2a1a0a;
+            letter-spacing: 6px;
+            font-weight: normal;
+            text-transform: uppercase;
+            border-bottom: 2px solid #2a1a0a;
+            padding-bottom: 10px;
+            position: relative;
+        }
+
+        .case-header h1::after {
+            content: '✧';
+            position: absolute;
+            right: 0;
+            bottom: -12px;
+            font-size: 14px;
+            color: #2a1a0a;
+        }
+
+        .case-number {
+            font-size: 13px;
+            color: #5a4a2a;
+            letter-spacing: 4px;
+            margin-top: 8px;
+        }
+
+        .evidence-dots {
+            display: flex;
+            gap: 6px;
+            margin: 20px 0;
+            justify-content: center;
+        }
+
+        .evidence-dots span {
+            width: 6px;
+            height: 6px;
+            background: #2a1a0a;
+            border-radius: 50%;
+            opacity: 0.4;
+        }
+
+        .instruction {
+            font-size: 14px;
+            color: #4a3a1a;
+            margin-bottom: 25px;
+            line-height: 1.6;
+            letter-spacing: 0.5px;
+        }
+
+        .instruction em {
+            font-style: italic;
+            color: #2a1a0a;
+        }
+
+        .code-input-group {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .code-input-group input {
+            width: 100%;
+            padding: 14px 16px;
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid #2a1a0a;
+            font-family: 'Special Elite', 'Courier New', monospace;
+            font-size: 28px;
+            letter-spacing: 12px;
+            text-align: center;
+            color: #2a1a0a;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .code-input-group input::placeholder {
+            color: rgba(42, 26, 10, 0.25);
+            letter-spacing: 4px;
+            font-size: 14px;
+        }
+
+        .code-input-group input:focus {
+            border-bottom-color: #8b2020;
+        }
+
+        .code-input-group .underline {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #8b2020;
+            transition: width 0.4s ease;
+        }
+
+        .code-input-group input:focus ~ .underline {
+            width: 100%;
+        }
+
+        .submit-btn {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            margin-top: 30px;
+            background: transparent;
+            border: 2px solid #2a1a0a;
+            font-family: 'Special Elite', 'Courier New', monospace;
+            font-size: 16px;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            color: #2a1a0a;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .submit-btn:hover {
+            background: #2a1a0a;
+            color: #f4e8c1;
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .submit-btn:disabled:hover {
+            background: transparent;
+            color: #2a1a0a;
+        }
+
+        .error-msg {
+            color: #8b2020;
+            font-size: 13px;
+            margin-top: 15px;
+            min-height: 20px;
+            letter-spacing: 1px;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .error-msg.show {
+            opacity: 1;
+        }
+
+        .footer-note {
+            margin-top: 30px;
+            font-size: 11px;
+            color: rgba(42, 26, 10, 0.3);
+            text-align: right;
+            letter-spacing: 2px;
+        }
+
+        .stamp {
+            position: absolute;
+            top: 20px;
+            right: 25px;
+            width: 65px;
+            height: 65px;
+            border: 3px solid rgba(139, 32, 32, 0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            color: rgba(139, 32, 32, 0.25);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transform: rotate(15deg);
+            font-weight: bold;
+        }
+
+        .stamp::before {
+            content: '';
+            position: absolute;
+            inset: 5px;
+            border: 1px solid rgba(139, 32, 32, 0.15);
+            border-radius: 50%;
+        }
+
+        .string-line {
+            position: fixed;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.08;
+        }
+
+        @media (max-width: 600px) {
+            .notebook {
+                padding: 35px 25px 35px 45px;
+            }
+            .notebook::before {
+                background: none;
+            }
+            .code-input-group input {
+                font-size: 22px;
+                letter-spacing: 8px;
+            }
+            .stamp {
+                width: 45px;
+                height: 45px;
+                font-size: 7px;
+                top: 12px;
+                right: 15px;
+            }
+            .case-header h1 {
+                font-size: 17px;
+                letter-spacing: 3px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="vignette"></div>
+    <div class="noise"></div>
+
+    <div class="notebook">
+        <div class="tape"></div>
+        <div class="stamp">confidencial</div>
+
+        <div class="case-header">
+            <h1>Archivo del Caso</h1>
+            <div class="case-number">— N° ██████ —</div>
+        </div>
+
+        <div class="evidence-dots">
+            <span></span><span></span><span></span>
+            <span></span><span></span><span></span>
+        </div>
+
+        <p class="instruction">
+            Ingrese el <em>código de identificación</em><br>
+            para acceder al expediente.
+        </p>
+
+        <div class="code-input-group">
+            <input type="text" id="codeInput" maxlength="6" placeholder="• • • • • •" autofocus>
+            <span class="underline"></span>
+        </div>
+
+        <button class="submit-btn" id="submitBtn">Abrir caso</button>
+
+        <p class="error-msg" id="errorMsg">✗ Código inválido. Acceso denegado.</p>
+
+        <div class="footer-note">— Evidencia clasificada —</div>
+    </div>
+
+    <svg class="string-line" style="top:10%;left:-5%;width:30%;height:3px;overflow:visible" viewBox="0 0 300 3" preserveAspectRatio="none">
+        <path d="M0,1.5 Q75,3 150,0.5 Q225,-1 300,1.5" stroke="#8b6914" stroke-width="0.5" fill="none"/>
+    </svg>
+    <svg class="string-line" style="bottom:15%;right:-3%;width:25%;height:3px;overflow:visible" viewBox="0 0 250 3" preserveAspectRatio="none">
+        <path d="M0,1.5 Q60,3 125,0 Q190,-1.5 250,1" stroke="#8b6914" stroke-width="0.5" fill="none"/>
+    </svg>
+
+    <script>
+        const VALID_IDS = {
+            '0712': 'id1.html',
+            '1984': 'id2.html'
+        };
+
+        const input = document.getElementById('codeInput');
+        const btn = document.getElementById('submitBtn');
+        const errorMsg = document.getElementById('errorMsg');
+
+        function validateCode() {
+            const code = input.value.trim();
+            if (VALID_IDS[code]) {
+                errorMsg.classList.remove('show');
+                window.location.href = VALID_IDS[code];
+            } else {
+                errorMsg.classList.add('show');
+                input.value = '';
+                input.focus();
+            }
+        }
+
+        btn.addEventListener('click', validateCode);
+
+        input.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                validateCode();
+            }
+        });
+
+        input.addEventListener('input', function() {
+            this.value = this.value.replace(/\D/g, '');
+            errorMsg.classList.remove('show');
+        });
+    </script>
+
+</body>
+</html>
