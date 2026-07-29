@@ -1,0 +1,417 @@
+function getEvidencia(id) {
+  return CASO1.evidences.find(function(e) { return e.id === id; });
+}
+
+function getSospechoso(id) {
+  return CASO1.suspects.find(function(s) { return s.id === id; });
+}
+
+/* ===== Persistencia (localStorage) ===== */
+function isUnlocked(evId) {
+  return localStorage.getItem('caso1_ev_' + evId) === 'true';
+}
+
+function setUnlocked(evId) {
+  localStorage.setItem('caso1_ev_' + evId, 'true');
+}
+
+/* ===== Lightbox ===== */
+var lightboxZoom = 1;
+var lightboxPanX = 0, lightboxPanY = 0;
+var lightboxDragging = false, lightboxStartX, lightboxStartY, lightboxStartPanX, lightboxStartPanY;
+
+function openLightbox(src) {
+  var overlay = document.getElementById('lightboxOverlay');
+  var img = document.getElementById('lightboxImage');
+  if (!overlay || !img) return;
+  img.src = src;
+  lightboxZoom = 1;
+  lightboxPanX = 0;
+  lightboxPanY = 0;
+  applyLightboxTransform(img);
+  overlay.classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeLightbox() {
+  var overlay = document.getElementById('lightboxOverlay');
+  if (!overlay) return;
+  overlay.classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+function applyLightboxTransform(img) {
+  img.style.transform = 'translate(calc(-50% + ' + lightboxPanX + 'px), calc(-50% + ' + lightboxPanY + 'px)) scale(' + lightboxZoom + ')';
+}
+
+function lightboxWheel(e) {
+  e.preventDefault();
+  var img = document.getElementById('lightboxImage');
+  var delta = e.deltaY > 0 ? -0.1 : 0.1;
+  lightboxZoom = Math.max(0.5, Math.min(10, lightboxZoom + delta));
+  applyLightboxTransform(img);
+}
+
+function lightboxMouseDown(e) {
+  if (e.target.id !== 'lightboxImage') return;
+  lightboxDragging = true;
+  lightboxStartX = e.clientX;
+  lightboxStartY = e.clientY;
+  lightboxStartPanX = lightboxPanX;
+  lightboxStartPanY = lightboxPanY;
+  e.target.style.cursor = 'grabbing';
+}
+
+function lightboxMouseMove(e) {
+  if (!lightboxDragging) return;
+  lightboxPanX = lightboxStartPanX + (e.clientX - lightboxStartX);
+  lightboxPanY = lightboxStartPanY + (e.clientY - lightboxStartY);
+  applyLightboxTransform(document.getElementById('lightboxImage'));
+}
+
+function lightboxMouseUp() {
+  lightboxDragging = false;
+  var img = document.getElementById('lightboxImage');
+  if (img) img.style.cursor = 'grab';
+}
+
+/* ===== Modal ===== */
+function openModal(id, cardEl, num) {
+  var s = getSospechoso(id);
+  if (!s) return;
+
+  var overlay = document.getElementById('modalOverlay');
+  if (!overlay) return;
+
+  if (cardEl) {
+    var rect = cardEl.getBoundingClientRect();
+    var originX = (rect.left + rect.width / 2) - window.innerWidth / 2;
+    var originY = (rect.top + rect.height / 2) - window.innerHeight / 2;
+    overlay.style.setProperty('--origin-x', originX + 'px');
+    overlay.style.setProperty('--origin-y', originY + 'px');
+  } else {
+    overlay.style.setProperty('--origin-x', '0px');
+    overlay.style.setProperty('--origin-y', '0px');
+  }
+
+  var imgSrc = 'assets/caso1/sospechosos/' + s.id + '.png';
+  var avatarEl = document.getElementById('modalAvatar');
+  avatarEl.src = imgSrc;
+  avatarEl.alt = s.nombre;
+  avatarEl.onclick = function() { openLightbox(imgSrc); };
+  document.getElementById('modalName').textContent = s.nombre;
+  document.getElementById('modalOcc').textContent = s.ocupacion;
+  document.getElementById('modalEdad').textContent = s.edad + ' a\u00f1os';
+  document.getElementById('modalCoartada').textContent = s.coartada;
+  document.getElementById('modalRasgo').textContent = s.rasgo;
+  var refEl = document.getElementById('modalSuspectRef');
+  if (refEl) refEl.textContent = num || 'SUS-??';
+
+  overlay.classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  var overlay = document.getElementById('modalOverlay');
+  overlay.classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+/* ===== Vault ===== */
+function setupVault(evId) {
+  var ev = getEvidencia(evId);
+  if (!ev) return;
+
+  var vaultScreen = document.getElementById('vaultScreen');
+  var contentArea = document.getElementById('evidenceContent');
+  var input = document.getElementById('keywordInput');
+  var btn = document.getElementById('unlockBtn');
+  var errorEl = document.getElementById('vaultError');
+
+  if (isUnlocked(evId)) {
+    vaultScreen.style.display = 'none';
+    contentArea.classList.add('revealed');
+    renderEvidence(ev, contentArea);
+    return;
+  }
+
+  function tryUnlock() {
+    var val = input ? input.value.trim().toUpperCase() : '';
+    if (val === ev.keyword) {
+      errorEl.classList.remove('show');
+      setUnlocked(evId);
+      vaultScreen.classList.add('glitch');
+      setTimeout(function() {
+        vaultScreen.style.display = 'none';
+        contentArea.classList.add('revealed');
+        renderEvidence(ev, contentArea);
+      }, 400);
+    } else {
+      errorEl.textContent = 'Palabra clave incorrecta';
+      errorEl.classList.add('show');
+      if (input) {
+        input.classList.add('shake');
+        setTimeout(function() { input.classList.remove('shake'); }, 500);
+        input.value = '';
+        input.focus();
+      }
+    }
+  }
+
+  if (btn) btn.addEventListener('click', tryUnlock);
+  if (input) {
+    input.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') { e.preventDefault(); tryUnlock(); }
+    });
+  }
+}
+
+function renderEvidence(ev, container) {
+  if (ev.type === 'email') renderEmail(ev, container);
+  else if (ev.type === 'chat') renderChat(ev, container);
+  else if (ev.type === 'log') renderLog(ev, container);
+  else if (ev.type === 'documento') renderDocumento(ev, container);
+}
+
+/* SVG icons */
+function iconStar() {
+  return '<svg viewBox="0 0 24 24" width="14" height="14" class="icon-svg"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>';
+}
+
+function iconReply() {
+  return '<svg viewBox="0 0 24 24" width="14" height="14" class="icon-svg"><polyline points="9 17 4 12 9 7"/><path d="M20 18v-2a4 4 0 0 0-4-4H4"/></svg>';
+}
+
+function iconTrash() {
+  return '<svg viewBox="0 0 24 24" width="14" height="14" class="icon-svg"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>';
+}
+
+function iconMore() {
+  return '<svg viewBox="0 0 24 24" width="14" height="14" class="icon-svg"><circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="19" r="1.5"/></svg>';
+}
+
+function iconSmiley() {
+  return '<svg viewBox="0 0 24 24" width="20" height="20" class="icon-svg"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>';
+}
+
+function iconMic() {
+  return '<svg viewBox="0 0 24 24" width="20" height="20" class="icon-svg"><rect x="9" y="2" width="6" height="11" rx="3"/><path d="M5 10a7 7 0 0 0 14 0"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>';
+}
+
+function iconWarning() {
+  return '<svg viewBox="0 0 24 24" width="14" height="14" class="icon-svg"><path d="M12 2L2 22h20L12 2z"/><line x1="12" y1="10" x2="12" y2="16"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>';
+}
+
+function iconLock() {
+  return '<svg viewBox="0 0 24 24" width="32" height="32" class="icon-svg"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>';
+}
+
+function iconLockOpen() {
+  return '<svg viewBox="0 0 24 24" width="32" height="32" class="icon-svg"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a2 2 0 0 1 3.75-.94"/><line x1="17.5" y1="8.5" x2="20" y2="6"/><line x1="20" y1="6" x2="22.5" y2="8.5"/></svg>';
+}
+
+/* ===== Gmail-style email ===== */
+function renderEmail(ev, container) {
+  var mainEmail = ev.entries[0];
+  var html = '<div class="gmail-view">';
+  html += '<div class="gmail-sidebar">';
+  html += '<div class="gmail-compose">Redactar</div>';
+  html += '<div class="gmail-folder active"><svg class="gmail-folder-icon" viewBox="0 0 16 16" width="14" height="14"><path d="M2 13.5V4l3-2.5h6L14 4v9.5a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1z" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M2 4h12v2L8 10 2 6V4z" fill="none" stroke="currentColor" stroke-width="1.2"/></svg>Recibidos</div>';
+  html += '<div class="gmail-folder">Destacados</div>';
+  html += '<div class="gmail-folder">Enviados</div>';
+  html += '<div class="gmail-folder">Papelera</div>';
+  html += '</div>';
+  html += '<div class="gmail-main">';
+  html += '<div class="gmail-toolbar">';
+  html += '<label class="gmail-check"><input type="checkbox"></label>';
+  html += '<span class="gmail-toolbar-btn">' + iconReply() + '</span>';
+  html += '<span class="gmail-toolbar-btn">' + iconMore() + '</span>';
+  html += '</div>';
+  html += '<div class="gmail-split">';
+  html += '<div class="gmail-list">';
+  ev.entries.forEach(function(e) {
+    var name = e.from.split('@')[0].replace(/\./g, ' ');
+    var shortName = name.split(' ').map(function(w) { return w.charAt(0).toUpperCase() + w.slice(1); }).join(' ');
+    var date = e.time.split(',')[0];
+    html += '<div class="gmail-list-item' + (e === mainEmail ? ' active' : '') + '">';
+    html += '<span class="gmail-star">' + iconStar() + '</span>';
+    html += '<div class="gmail-item-from">' + shortName + '</div>';
+    html += '<div class="gmail-item-subject">' + e.subject + '</div>';
+    html += '<div class="gmail-item-date">' + date + '</div>';
+    html += '</div>';
+  });
+  html += '</div>';
+  html += '<div class="gmail-detail">';
+  var first = ev.entries[0];
+  html += '<div class="gmail-detail-header">';
+  html += '<h3 class="gmail-detail-subject">' + first.subject + '</h3>';
+  html += '<div class="gmail-detail-actions"><span>' + iconStar() + '</span><span>' + iconReply() + '</span><span>' + iconTrash() + '</span><span>' + iconMore() + '</span></div>';
+  html += '</div>';
+  html += '<div class="gmail-detail-from">';
+  html += '<span class="gmail-avatar">' + first.from.charAt(0).toUpperCase() + '</span>';
+  html += '<div><strong>' + first.from.split('@')[0].replace(/\./g, ' ') + '</strong><br><span class="gmail-detail-addr">' + first.from + '</span></div>';
+  html += '<div class="gmail-detail-time">' + first.time + '</div>';
+  html += '</div>';
+  html += '<div class="gmail-detail-body">' + first.body.replace(/\n/g, '<br>') + '</div>';
+  if (ev.entries.length > 1) {
+    var rest = ev.entries.slice(1);
+    rest.forEach(function(r) {
+      html += '<div class="gmail-reply-chain">';
+      html += '<div class="gmail-reply-header">' + r.time + ' \u2014 ' + r.from.split('@')[0].replace(/\./g, ' ') + '</div>';
+      html += '<div class="gmail-reply-body">' + r.body.replace(/\n/g, '<br>') + '</div>';
+      html += '</div>';
+    });
+  }
+  html += '</div></div></div></div>';
+  container.innerHTML = html;
+}
+
+/* ===== WhatsApp-style chat ===== */
+function renderChat(ev, container) {
+  var html = '<div class="whatsapp-view">';
+  html += '<div class="wa-header">';
+  html += '<span class="wa-back">' + iconReply() + '</span>';
+  html += '<span class="wa-avatar">';
+  html += ev.group.charAt(0).toUpperCase();
+  html += '</span>';
+  html += '<div class="wa-contact-info">';
+  html += '<div class="wa-contact-name">' + ev.group + '</div>';
+  html += '<div class="wa-status">en l\u00ednea</div>';
+  html += '</div>';
+  html += '<span class="wa-menu">' + iconMore() + '</span>';
+  html += '</div>';
+  html += '<div class="wa-chat">';
+  html += '<div class="wa-date-divider">14 de marzo</div>';
+  ev.messages.forEach(function(m) {
+    var cls = m.from === 'Rector E.' ? 'sent' : 'received';
+    html += '<div class="bubble ' + cls + '">';
+    if (cls === 'received') {
+      html += '<div class="bubble-author">' + m.from + '</div>';
+    }
+    html += m.text;
+    html += '<div class="bubble-time">' + m.time + '</div>';
+    if (cls === 'sent') {
+      html += '<span class="bubble-check">' + iconCheck() + '</span>';
+    }
+    html += '</div>';
+  });
+  html += '</div>';
+  html += '<div class="wa-input">';
+  html += '<span class="wa-emoji">' + iconSmiley() + '</span>';
+  html += '<input type="text" placeholder="Escribe un mensaje" disabled>';
+  html += '<span class="wa-mic">' + iconMic() + '</span>';
+  html += '</div>';
+  html += '</div>';
+  container.innerHTML = html;
+}
+
+function iconCheck() {
+  return '<svg viewBox="0 0 24 24" width="14" height="14" class="icon-svg"><polyline points="2 14 8 20 22 4" stroke-width="2.5"/></svg>';
+}
+
+/* ===== Log table ===== */
+function renderLog(ev, container) {
+  var html = '<div class="log-view">';
+  html += '<div class="log-table-header">';
+  html += '<div class="log-title-group">';
+  html += '<span class="log-institution">' + ev.title + '</span>';
+  html += '<span class="log-subtitle">' + ev.subtitle + '</span>';
+  html += '</div>';
+  html += '<span class="log-badge">LIVE</span>';
+  html += '</div>';
+  html += '<table class="log-table">';
+  html += '<thead><tr>';
+  ev.columns.forEach(function(c) {
+    html += '<th>' + c + '</th>';
+  });
+  html += '</tr></thead>';
+  html += '<tbody>';
+  ev.rows.forEach(function(row) {
+    if (row.gap) {
+      html += '<tr class="log-gap-row"><td colspan="' + ev.columns.length + '"><span class="log-gap-icon">' + iconWarning() + '</span> ' + row.gapLabel + '</td></tr>';
+    }
+    var cls = row.alert ? ' class="log-alert-row"' : '';
+    html += '<tr' + cls + '>';
+    row.cells.forEach(function(cell, i) {
+      var cls2 = i === 0 ? ' class="log-cell-time"' : '';
+      html += '<td' + cls2 + '>' + cell + '</td>';
+    });
+    html += '</tr>';
+  });
+  html += '</tbody></table></div>';
+  container.innerHTML = html;
+}
+
+/* ===== Wikipedia-style document ===== */
+function renderDocumento(ev, container) {
+  var html = '<div class="wiki-view">';
+  html += '<div class="wiki-top-notice">Documento interno \u2014 no circula fuera de la investigaci\u00f3n</div>';
+  html += '<div class="wiki-header">';
+  html += '<h1 class="wiki-title">' + ev.title + '</h1>';
+  html += '<div class="wiki-subtitle">' + ev.subtitle + '</div>';
+  html += '</div>';
+  html += '<div class="wiki-body">';
+  html += '<div class="wiki-sidebar">';
+  if (ev.infobox) {
+    html += '<div class="wiki-infobox">';
+    html += '<div class="infobox-title">Ficha del documento</div>';
+    for (var key in ev.infobox) {
+      var label = key.replace(/_/g, ' ');
+      label = label.charAt(0).toUpperCase() + label.slice(1);
+      html += '<div class="infobox-row"><span class="infobox-label">' + label + '</span><span class="infobox-value">' + ev.infobox[key] + '</span></div>';
+    }
+    html += '</div>';
+  }
+  html += '</div>';
+  html += '<div class="wiki-content">';
+  ev.sections.forEach(function(section) {
+    html += '<div class="wiki-section">';
+    html += '<h2 class="wiki-section-heading">' + section.heading + '</h2>';
+    if (section.annotations) {
+      html += '<div class="wiki-annotation-badge">Documento con anotaciones</div>';
+    }
+    if (section.highlight) {
+      html += '<div class="wiki-highlight-box">';
+      html += '<p>' + section.content.replace(/\n/g, '<br>') + '</p>';
+      html += '</div>';
+    } else {
+      html += '<p>' + section.content.replace(/\n/g, '<br>') + '</p>';
+    }
+    if (section.table) {
+      html += '<div class="wiki-table-wrap">';
+      html += '<table class="wiki-table">';
+      html += '<thead><tr>';
+      section.table.columns.forEach(function(c) {
+        html += '<th>' + c + '</th>';
+      });
+      html += '</tr></thead>';
+      html += '<tbody>';
+      section.table.rows.forEach(function(row, ri) {
+        var isDup = ri > 0 && section.table.rows[ri - 1] && row[0] === section.table.rows[ri - 1][0];
+        html += '<tr' + (isDup ? ' class="wiki-row-duplicate"' : '') + '>';
+        row.forEach(function(cell) {
+          html += '<td>' + cell + '</td>';
+        });
+        html += '</tr>';
+      });
+      if (section.table.footer) {
+        html += '<tfoot><tr>';
+        section.table.footer.forEach(function(cell) {
+          html += '<td>' + cell + '</td>';
+        });
+        html += '</tr></tfoot>';
+      }
+      html += '</tbody></table>';
+      html += '</div>';
+    }
+    html += '</div>';
+  });
+  html += '</div>';
+  html += '</div>';
+  html += '<div class="wiki-footer">';
+  html += '<span>Fuente: Repositorio interno de la investigaci\u00f3n</span>';
+  html += '<span>Uso exclusivo del caso</span>';
+  html += '</div>';
+  html += '</div>';
+  container.innerHTML = html;
+}

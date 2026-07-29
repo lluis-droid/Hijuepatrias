@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sospechosos — Campus Digital</title>
+    <link rel="stylesheet" href="stylescaso1.css">
+</head>
+<body>
+    <div class="vignette"></div>
+    <div class="noise"></div>
+
+    <div class="notebook">
+        <div class="tape"></div>
+        <div class="watermark">HIJUEPATRIAS</div>
+        <div class="stamp">confidencial</div>
+
+        <div class="logo-bar">
+            <img src="logo.png" alt="">
+            <span>hijuepatrias · inteligencia &amp; estrategia</span>
+        </div>
+
+        <div class="case-header">
+            <h1>Sospechosos</h1>
+            <div class="case-number">— Campus Digital —</div>
+        </div>
+
+        <a href="expedientecaso1.html" class="back-link">← Volver al expediente</a>
+
+        <div class="notebook-content">
+            <div class="suspects-grid" id="suspectsGrid"></div>
+        </div>
+
+        <div class="footer-note">— hijuepatrias · Personas de interés —</div>
+    </div>
+
+    <div class="lightbox-overlay" id="lightboxOverlay">
+        <button class="lightbox-close" onclick="closeLightbox()"><svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" fill="none" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+        <img class="lightbox-image" id="lightboxImage" src="" alt="">
+    </div>
+
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="dossier-modal">
+            <button class="modal-close" onclick="closeModal()"><svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+            <div class="dossier-top-bar"></div>
+            <div class="dossier-body">
+                <div class="dossier-mugshot-col">
+                    <img class="dossier-mugshot" id="modalAvatar" src="" alt="">
+                    <div class="dossier-mugshot-label">Foto de identificaci&oacute;n</div>
+                </div>
+                <div class="dossier-info-col">
+                    <span class="dossier-ref" id="modalSuspectRef">SUS-001</span>
+                    <h2 id="modalName"></h2>
+                    <p class="dossier-occ" id="modalOcc"></p>
+                    <div class="dossier-section-title">Datos de investigaci&oacute;n</div>
+                    <div class="dossier-field">
+                        <span class="dossier-field-label">Edad</span>
+                        <span class="dossier-field-value" id="modalEdad"></span>
+                    </div>
+                    <div class="dossier-field">
+                        <span class="dossier-field-label">Coartada</span>
+                        <span class="dossier-field-value" id="modalCoartada"></span>
+                    </div>
+                    <div class="dossier-field">
+                        <span class="dossier-field-label">Rasgo distintivo</span>
+                        <span class="dossier-field-value" id="modalRasgo"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="dossier-footer">
+                <span>Caso: Campus Digital</span>
+                <span>hijuepatrias · SISTEMA DE INVESTIGACI&Oacute;N</span>
+            </div>
+        </div>
+    </div>
+
+    <script src="datacaso1.js"></script>
+    <script src="scriptcaso1.js"></script>
+    <script>
+        (function() {
+            var grid = document.getElementById('suspectsGrid');
+            CASO1.suspects.forEach(function(s, idx) {
+                var card = document.createElement('div');
+                card.className = 'suspect-card';
+                var num = 'SUS-' + String(idx + 1).padStart(2, '0');
+                card.setAttribute('data-num', num);
+                var imgSrc = 'assets/caso1/sospechosos/' + s.id + '.png';
+                card.innerHTML = '<img class="avatar" src="' + imgSrc + '" alt="' + s.nombre + '" onerror="this.style.background=\'#e8d8a8\';this.style.padding=\'25px\';this.alt=\'' + s.nombre.charAt(0) + '\'"><h3>' + s.nombre + '</h3><p class="occ">' + s.ocupacion + '</p>';
+                card.querySelector('.avatar').addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    openLightbox(imgSrc);
+                });
+                card.addEventListener('click', function(e) {
+                    openModal(s.id, card, num);
+                });
+                grid.appendChild(card);
+            });
+
+            var overlay = document.getElementById('modalOverlay');
+            overlay.addEventListener('click', function(e) {
+                if (e.target === this) closeModal();
+            });
+
+            /* Lightbox */
+            var lbOverlay = document.getElementById('lightboxOverlay');
+            var lbImg = document.getElementById('lightboxImage');
+            lbOverlay.addEventListener('click', function(e) {
+                if (e.target === this) closeLightbox();
+            });
+            lbOverlay.addEventListener('wheel', lightboxWheel, { passive: false });
+            lbImg.addEventListener('mousedown', lightboxMouseDown);
+            document.addEventListener('mousemove', lightboxMouseMove);
+            document.addEventListener('mouseup', lightboxMouseUp);
+
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') { closeModal(); closeLightbox(); }
+            });
+        })();
+    </script>
+</body>
+</html>

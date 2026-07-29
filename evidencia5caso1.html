@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EVIDENCIA 5 — Campus Digital</title>
+    <link rel="stylesheet" href="stylescaso1.css">
+</head>
+<body>
+    <div class="vignette"></div>
+    <div class="noise"></div>
+
+    <div class="notebook">
+        <div class="tape"></div>
+        <div class="watermark">HIJUEPATRIAS</div>
+        <div class="stamp">confidencial</div>
+
+        <div class="logo-bar">
+            <img src="logo.png" alt="">
+            <span>hijuepatrias · inteligencia &amp; estrategia</span>
+        </div>
+
+        <div class="case-header">
+            <h1>Evidencia 5</h1>
+            <div class="case-number">— Campus Digital —</div>
+        </div>
+
+        <a href="evidenciascaso1.html" class="back-link">← Volver a evidencia</a>
+
+        <div class="notebook-content">
+            <div class="vault" id="vaultScreen">
+                <span class="lock-icon"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>
+                <h2>EVIDENCIA 5</h2>
+                <p class="vault-desc">Archivo protegido. Solo se abrirá con la palabra clave correcta.</p>
+                <div class="vault-input-row">
+                    <input type="text" id="keywordInput" maxlength="20" placeholder="••••••••" autofocus>
+                    <button id="unlockBtn">Desbloquear</button>
+                </div>
+                <div class="vault-error" id="vaultError"></div>
+            </div>
+            <div class="evidence-content" id="evidenceContent"></div>
+        </div>
+
+        <div class="footer-note">— hijuepatrias · Evidencia clasificada —</div>
+    </div>
+
+    <script src="datacaso1.js"></script>
+    <script src="scriptcaso1.js"></script>
+    <script>setupVault(5);</script>
+</body>
+</html>
