@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RESOLVER CASO — La Línea de Agua</title>
+    <link rel="stylesheet" href="stylescaso2.css">
+</head>
+<body>
+    <div class="vignette"></div>
+    <div class="noise"></div>
+
+    <div class="notebook">
+        <div class="tape"></div>
+        <div class="watermark">HIJUEPATRIAS</div>
+        <div class="stamp">confidencial</div>
+
+        <div class="logo-bar">
+            <img src="logo.png" alt="">
+            <span>hijuepatrias · inteligencia &amp; estrategia</span>
+        </div>
+
+        <div class="case-header">
+            <h1>Resolver Caso</h1>
+            <div class="case-number">— La Línea de Agua —</div>
+        </div>
+
+        <a href="expedientecaso2.html" class="back-link">← Volver al expediente</a>
+
+        <div class="notebook-content" id="resolveContent">
+            <p class="board-panel-desc">Ha llegado el momento de presentar su teoría. Responda cada sección con cuidado. Una vez enviado, no podrá modificarlo.</p>
+
+            <div class="resolve-section">
+                <h3 class="resolve-question">1. Responsable</h3>
+                <p class="resolve-hint">¿Quién ordenó la manipulación del informe ambiental?</p>
+                <select class="resolve-select" id="r1"><option value="">Seleccionar...</option></select>
+            </div>
+
+            <div class="resolve-section">
+                <h3 class="resolve-question">2. Motivo</h3>
+                <p class="resolve-hint">¿Por qué lo hizo?</p>
+                <select class="resolve-select" id="r2">
+                    <option value="">Seleccionar...</option>
+                    <option value="a">Ocultar las descargas ilegales para ahorrar costos operativos y obtener su bono anual</option>
+                    <option value="b">Proteger a Palmeras del Sur, su cliente más grande, de una demanda ambiental</option>
+                    <option value="c">Evitar que se descubriera que aceptó un soborno para agilizar el permiso</option>
+                    <option value="d">Ocultar las descargas no autorizadas que ordenó para reducir costos de tratamiento</option>
+                    <option value="e">Temía perder su trabajo si reportaba la alteración de los resultados</option>
+                    <option value="f">Necesitaba dinero para la cuota inicial de una casa y aceptó el encargo</option>
+                </select>
+            </div>
+
+            <div class="resolve-section">
+                <h3 class="resolve-question">3. Método</h3>
+                <p class="resolve-hint">¿Cómo se manipuló el informe?</p>
+                <select class="resolve-select" id="r3">
+                    <option value="">Seleccionar...</option>
+                    <option value="a">Alteró personalmente los resultados de laboratorio y eliminó la muestra original</option>
+                    <option value="b">Ordenó al supervisor de plantacoordinar el reemplazo de la muestra, autorizó a la técnica modificar los resultados, pagó a un funcionario público y firmó el informe falso</option>
+                    <option value="c">Cambió los números en el informe final sin modificar las muestras de laboratorio</option>
+                    <option value="d">Transportó las muestras originales a un vertedero y reemplazó los frascos en el laboratorio</option>
+                    <option value="e">Redactó un contrato falso que justificara los vertimientos como "operación autorizada"</option>
+                    <option value="f">Aceptó un soborno para no revisar el expediente y aprobó el permiso sin inspección</option>
+                </select>
+            </div>
+
+            <div class="resolve-section">
+                <h3 class="resolve-question">4. Evidencias decisivas</h3>
+                <p class="resolve-hint">Seleccione las evidencias que realmente sustentan su teoría.</p>
+                <div id="evCheckboxes"></div>
+            </div>
+
+            <div class="resolve-section">
+                <h3 class="resolve-question">5. Sospechoso descartado</h3>
+                <p class="resolve-hint">¿Quién parecía culpable pero resultó ser un instrumento de otro?</p>
+                <select class="resolve-select" id="r5"><option value="">Seleccionar...</option></select>
+            </div>
+
+            <div class="resolve-section">
+                <h3 class="resolve-question">6. Contradicción clave</h3>
+                <p class="resolve-hint">¿Cuál fue la contradicción que permitió resolver el caso?</p>
+                <textarea class="resolve-textarea" id="r6" placeholder="Explique la contradicción principal..."></textarea>
+            </div>
+
+            <div class="resolve-section">
+                <h3 class="resolve-question">7. Explicación final</h3>
+                <p class="resolve-hint">Escriba su teoría completa de los hechos.</p>
+                <textarea class="resolve-textarea" id="r7" placeholder="Describa qué ocurrió, quién lo hizo, cómo, cuándo y por qué..."></textarea>
+            </div>
+
+            <button class="resolve-submit" onclick="submitResolution()">Enviar resolución</button>
+            <div id="resolveResult"></div>
+        </div>
+
+        <div class="footer-note">— hijuepatrias · Resolución del caso —</div>
+    </div>
+
+    <script src="datacaso2.js"></script>
+    <script>
+        var suspects = CASO2.suspects;
+        var solution = CASO2.solution;
+
+        var r1 = document.getElementById('r1');
+        var r5 = document.getElementById('r5');
+        suspects.forEach(function(s) {
+            var opt1 = document.createElement('option');
+            opt1.value = s.id;
+            opt1.textContent = s.nombre;
+            r1.appendChild(opt1);
+            var opt5 = document.createElement('option');
+            opt5.value = s.id;
+            opt5.textContent = s.nombre;
+            r5.appendChild(opt5);
+        });
+
+        var evContainer = document.getElementById('evCheckboxes');
+        CASO2.evidences.forEach(function(ev) {
+            var label = document.createElement('label');
+            label.className = 'resolve-check-label';
+            label.innerHTML = '<input type="checkbox" class="resolve-check" value="' + ev.id + '"> Evidencia ' + ev.id;
+            evContainer.appendChild(label);
+        });
+
+        function submitResolution() {
+            var score = 0;
+            var details = [];
+
+            var resp = document.getElementById('r1').value;
+            if (resp === solution.responsible) { score += 10; details.push('✓ Responsable: +10'); }
+            else { details.push('✗ Responsable incorrecto'); }
+
+            var motivo = document.getElementById('r2').value;
+            if (motivo === solution.motiveKey) { score += 10; details.push('✓ Motivo: +10'); }
+            else { details.push('✗ Motivo incorrecto'); }
+
+            var metodo = document.getElementById('r3').value;
+            if (metodo === solution.methodKey) { score += 10; details.push('✓ Método: +10'); }
+            else { details.push('✗ Método incorrecto'); }
+
+            var checks = document.querySelectorAll('.resolve-check:checked');
+            var selectedEvs = [];
+            checks.forEach(function(c) { selectedEvs.push(parseInt(c.value)); });
+            var correctEvs = solution.evidences;
+            var evCorrect = 0;
+            selectedEvs.forEach(function(ev) {
+                if (correctEvs.indexOf(ev) !== -1) evCorrect++;
+            });
+            var evScore = 0;
+            if (selectedEvs.length <= 6) {
+                var penalty = Math.abs(selectedEvs.length - correctEvs.length);
+                evScore = Math.max(0, evCorrect * 3 - penalty * 2);
+                evScore = Math.min(15, evScore);
+            }
+            score += evScore;
+            details.push('Evidencias: +' + evScore + '/15');
+
+            var descartado = document.getElementById('r5').value;
+            if (descartado === solution.descartadoKey) { score += 10; details.push('✓ Sospechoso descartado: +10'); }
+            else { details.push('✗ Sospechoso descartado incorrecto'); }
+
+            var contradiccion = document.getElementById('r6').value.trim();
+            if (contradiccion.length > 20) { score += 15; details.push('✓ Contradicción: +15'); }
+            else { details.push('✗ Contradicción insuficiente'); }
+
+            var explicacion = document.getElementById('r7').value.trim();
+            if (explicacion.length > 50) { score += 15; details.push('✓ Explicación final: +15'); }
+            else { details.push('✗ Explicación insuficiente'); }
+
+            score = Math.min(100, score);
+
+            var resultDiv = document.getElementById('resolveResult');
+            var rank = '';
+            if (score >= 90) rank = 'INVESTIGADOR EXCEPCIONAL';
+            else if (score >= 75) rank = 'CASO RESUELTO';
+            else if (score >= 60) rank = 'TEORÍA PLAUSIBLE, PERO INCOMPLETA';
+            else rank = 'EVIDENCIA INSUFICIENTE';
+
+            var showSolution = score >= 75 || (resp === solution.responsible && motivo === solution.motiveKey);
+
+            var html = '<div class="resolve-result-box">';
+            html += '<h3>Puntuación: ' + score + '/100</h3>';
+            html += '<div class="resolve-rank ' + (score >= 75 ? 'rank-pass' : 'rank-fail') + '">' + rank + '</div>';
+            html += '<div class="resolve-details">' + details.join('<br>') + '</div>';
+
+            if (showSolution) {
+                html += '<div class="resolve-solution">';
+                html += '<h4>SOLUCIÓN DEL CASO</h4>';
+                var sName = '';
+                suspects.forEach(function(s) { if (s.id === solution.responsible) sName = s.nombre; });
+                html += '<p><strong>Responsable:</strong> ' + sName + '</p>';
+                html += '<p><strong>Motivo:</strong> ' + solution.motive + '</p>';
+                html += '<p><strong>Método:</strong> ' + solution.method + '</p>';
+                html += '<p><strong>Cronología:</strong></p><ul>';
+                solution.timeline.forEach(function(t) { html += '<li>' + t + '</li>'; });
+                html += '</ul>';
+                html += '<p><strong>Evidencia clave:</strong></p><ul>';
+                solution.key_evidence.forEach(function(e) { html += '<li>' + e + '</li>'; });
+                html += '</ul>';
+                html += '<p><strong>Contradicción clave:</strong> ' + solution.contradiction + '</p>';
+                html += '<p><strong>Pistas falsas:</strong></p><ul>';
+                solution.false_leads.forEach(function(f) { html += '<li>' + f + '</li>'; });
+                html += '</ul>';
+                html += '</div>';
+            } else {
+                html += '<p class="resolve-insufficient">Debe obtener al menos 75 puntos o acertar responsable y motivo para ver la solución completa.</p>';
+            }
+
+            html += '</div>';
+            resultDiv.innerHTML = html;
+            resultDiv.scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>

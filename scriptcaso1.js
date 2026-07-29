@@ -104,6 +104,11 @@ function openModal(id, cardEl, num) {
   document.getElementById('modalEdad').textContent = s.edad + ' a\u00f1os';
   document.getElementById('modalCoartada').textContent = s.coartada;
   document.getElementById('modalRasgo').textContent = s.rasgo;
+  if (document.getElementById('modalDeclaracion')) document.getElementById('modalDeclaracion').textContent = s.declaracion || 'Sin registro';
+  if (document.getElementById('modalSecreto')) document.getElementById('modalSecreto').textContent = s.secreto || 'Sin registro';
+  if (document.getElementById('modalMotivo')) document.getElementById('modalMotivo').textContent = s.motivo || 'Sin registro';
+  if (document.getElementById('modalRelaciones')) document.getElementById('modalRelaciones').textContent = s.relaciones || 'Sin registro';
+  if (document.getElementById('modalAcceso')) document.getElementById('modalAcceso').textContent = s.acceso || 'Sin registro';
   var refEl = document.getElementById('modalSuspectRef');
   if (refEl) refEl.textContent = num || 'SUS-??';
 

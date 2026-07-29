@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TABLERO DE INVESTIGACIÓN — La Línea de Agua</title>
+    <link rel="stylesheet" href="stylescaso2.css">
+</head>
+<body>
+    <div class="vignette"></div>
+    <div class="noise"></div>
+
+    <div class="notebook">
+        <div class="tape"></div>
+        <div class="watermark">HIJUEPATRIAS</div>
+        <div class="stamp">confidencial</div>
+
+        <div class="logo-bar">
+            <img src="logo.png" alt="">
+            <span>hijuepatrias · inteligencia &amp; estrategia</span>
+        </div>
+
+        <div class="case-header">
+            <h1>Tablero de Investigación</h1>
+            <div class="case-number">— La Línea de Agua —</div>
+        </div>
+
+        <a href="expedientecaso2.html" class="back-link">← Volver al expediente</a>
+
+        <div class="notebook-content">
+            <div class="board-tabs">
+                <button class="board-tab active" data-tab="notas">Notas</button>
+                <button class="board-tab" data-tab="hipotesis">Hipótesis</button>
+                <button class="board-tab" data-tab="cronologia">Cronología</button>
+            </div>
+
+            <div class="board-panel active" id="panel-notas">
+                <h3 class="board-panel-title">Cuaderno de Notas</h3>
+                <p class="board-panel-desc">Escriba aquí sus observaciones, conexiones y conclusiones parciales.</p>
+                <textarea class="board-textarea" id="notesArea" placeholder="Escribe tus notas aquí...&#10;&#10;Ej: La muestra M-007 fue reemplazada por M-007-R a las 15:20..."></textarea>
+                <button class="board-save-btn" onclick="saveNotes()">Guardar notas</button>
+                <span class="board-save-msg" id="notesSaveMsg"></span>
+            </div>
+
+            <div class="board-panel" id="panel-hipotesis">
+                <h3 class="board-panel-title">Formulación de Hipótesis</h3>
+                <p class="board-panel-desc">Construya sus hipótesis sobre lo que ocurrió.</p>
+                <div id="hipotesisContainer">
+                    <div class="hipotesis-card">
+                        <select class="hip-select" id="hipSuspect">
+                            <option value="">Seleccionar sospechoso...</option>
+                        </select>
+                        <input type="text" class="hip-input" id="hipMotivo" placeholder="Motivo posible...">
+                        <textarea class="hip-textarea" id="hipExplicacion" placeholder="¿Qué cree que ocurrió? ¿Cómo lo hizo?"></textarea>
+                        <input type="text" class="hip-input" id="hipFavor" placeholder="Evidencias a favor (ej: 1, 3, 5)...">
+                        <input type="text" class="hip-input" id="hipContra" placeholder="Evidencias en contra...">
+                        <button class="board-save-btn" onclick="saveHipotesis()">Guardar hipótesis</button>
+                        <span class="board-save-msg" id="hipSaveMsg"></span>
+                    </div>
+                </div>
+                <div id="hipotesisSaved"></div>
+            </div>
+
+            <div class="board-panel" id="panel-cronologia">
+                <h3 class="board-panel-title">Línea Temporal</h3>
+                <p class="board-panel-desc">Organice los acontecimientos en orden cronológico para visualizar la secuencia.</p>
+                <div id="timelineEntries">
+                    <div class="tl-entry">
+                        <input type="text" class="tl-time" placeholder="Hora (ej: 08:45)" id="tlTime0">
+                        <input type="text" class="tl-event" placeholder="Acontecimiento..." id="tlEvent0">
+                        <button class="tl-remove" onclick="removeTimeline(0)" style="display:none;">×</button>
+                    </div>
+                </div>
+                <button class="board-save-btn" onclick="addTimeline()">+ Añadir evento</button>
+                <button class="board-save-btn" onclick="saveTimeline()">Guardar cronología</button>
+                <span class="board-save-msg" id="tlSaveMsg"></span>
+                <div id="timelineDisplay"></div>
+            </div>
+        </div>
+
+        <div class="footer-note">— hijuepatrias · Tablero de investigación —</div>
+    </div>
+
+    <script src="datacaso2.js"></script>
+    <script>
+        var CASE_KEY = 'caso2';
+        var suspects = CASO2.suspects;
+
+        document.querySelectorAll('.board-tab').forEach(function(tab) {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.board-tab').forEach(function(t) { t.classList.remove('active'); });
+                document.querySelectorAll('.board-panel').forEach(function(p) { p.classList.remove('active'); });
+                this.classList.add('active');
+                document.getElementById('panel-' + this.dataset.tab).classList.add('active');
+            });
+        });
+
+        var sel = document.getElementById('hipSuspect');
+        suspects.forEach(function(s) {
+            var opt = document.createElement('option');
+            opt.value = s.id;
+            opt.textContent = s.nombre;
+            sel.appendChild(opt);
+        });
+
+        function saveNotes() {
+            var val = document.getElementById('notesArea').value;
+            localStorage.setItem(CASE_KEY + '_notes', val);
+            var msg = document.getElementById('notesSaveMsg');
+            msg.textContent = '✓ Notas guardadas';
+            setTimeout(function() { msg.textContent = ''; }, 2000);
+        }
+
+        function loadNotes() {
+            var val = localStorage.getItem(CASE_KEY + '_notes');
+            if (val) document.getElementById('notesArea').value = val;
+        }
+
+        function saveHipotesis() {
+            var suspect = document.getElementById('hipSuspect').value;
+            var motivo = document.getElementById('hipMotivo').value;
+            var explicacion = document.getElementById('hipExplicacion').value;
+            var favor = document.getElementById('hipFavor').value;
+            var contra = document.getElementById('hipContra').value;
+            var data = { suspect: suspect, motivo: motivo, explicacion: explicacion, favor: favor, contra: contra };
+            localStorage.setItem(CASE_KEY + '_hipotesis', JSON.stringify(data));
+            var msg = document.getElementById('hipSaveMsg');
+            msg.textContent = '✓ Hipótesis guardada';
+            setTimeout(function() { msg.textContent = ''; }, 2000);
+            displayHipotesis();
+        }
+
+        function displayHipotesis() {
+            var container = document.getElementById('hipotesisSaved');
+            var raw = localStorage.getItem(CASE_KEY + '_hipotesis');
+            if (!raw) { container.innerHTML = ''; return; }
+            var h = JSON.parse(raw);
+            var sName = '—';
+            suspects.forEach(function(s) { if (s.id === h.suspect) sName = s.nombre; });
+            container.innerHTML =
+                '<div class="hipotesis-saved-card"><strong>Sospechoso:</strong> ' + sName +
+                '<br><strong>Motivo:</strong> ' + (h.motivo || '—') +
+                '<br><strong>Teoría:</strong> ' + (h.explicacion || '—') +
+                '<br><strong>A favor:</strong> Evidencia ' + (h.favor || '—') +
+                '<br><strong>En contra:</strong> Evidencia ' + (h.contra || '—') +
+                '</div>';
+        }
+
+        var tlCounter = 1;
+
+        function addTimeline() {
+            var container = document.getElementById('timelineEntries');
+            var div = document.createElement('div');
+            div.className = 'tl-entry';
+            div.innerHTML =
+                '<input type="text" class="tl-time" placeholder="Hora (ej: 08:45)" id="tlTime' + tlCounter + '">' +
+                '<input type="text" class="tl-event" placeholder="Acontecimiento..." id="tlEvent' + tlCounter + '">' +
+                '<button class="tl-remove" onclick="removeTimeline(' + tlCounter + ')">×</button>';
+            container.appendChild(div);
+            tlCounter++;
+        }
+
+        function removeTimeline(id) {
+            var el = document.getElementById('tlTime' + id);
+            if (el) el.parentElement.remove();
+        }
+
+        function saveTimeline() {
+            var entries = [];
+            document.querySelectorAll('.tl-entry').forEach(function(entry) {
+                var time = entry.querySelector('.tl-time').value;
+                var event = entry.querySelector('.tl-event').value;
+                if (time || event) entries.push({ time: time, event: event });
+            });
+            localStorage.setItem(CASE_KEY + '_timeline', JSON.stringify(entries));
+            var msg = document.getElementById('tlSaveMsg');
+            msg.textContent = '✓ Cronología guardada';
+            setTimeout(function() { msg.textContent = ''; }, 2000);
+            displayTimeline();
+        }
+
+        function displayTimeline() {
+            var container = document.getElementById('timelineDisplay');
+            var raw = localStorage.getItem(CASE_KEY + '_timeline');
+            if (!raw) { container.innerHTML = ''; return; }
+            var entries = JSON.parse(raw);
+            if (entries.length === 0) { container.innerHTML = ''; return; }
+            var html = '<div class="tl-display"><h4>Cronología registrada:</h4>';
+            entries.forEach(function(e) {
+                html += '<div class="tl-display-entry"><span class="tl-display-time">' + (e.time || '??') + '</span> <span class="tl-display-event">' + (e.event || '—') + '</span></div>';
+            });
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        function loadAll() {
+            loadNotes();
+            displayHipotesis();
+            displayTimeline();
+            var raw = localStorage.getItem(CASE_KEY + '_timeline');
+            if (raw) {
+                var entries = JSON.parse(raw);
+                if (entries.length > 0) {
+                    var container = document.getElementById('timelineEntries');
+                    container.innerHTML = '';
+                    entries.forEach(function(e, i) {
+                        var div = document.createElement('div');
+                        div.className = 'tl-entry';
+                        div.innerHTML =
+                            '<input type="text" class="tl-time" placeholder="Hora" id="tlTime' + i + '" value="' + (e.time || '') + '">' +
+                            '<input type="text" class="tl-event" placeholder="Acontecimiento..." id="tlEvent' + i + '" value="' + (e.event || '') + '">' +
+                            '<button class="tl-remove" onclick="removeTimeline(' + i + ')">×</button>';
+                        container.appendChild(div);
+                        tlCounter = i + 2;
+                    });
+                }
+            }
+        }
+
+        loadAll();
+    </script>
+</body>
+</html>

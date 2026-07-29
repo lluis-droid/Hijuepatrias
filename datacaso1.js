@@ -6,7 +6,12 @@ const CASO1 = {
       ocupacion: 'Secretaria de Bienestar Universitario',
       edad: 34,
       coartada: 'Estaba en una reunión del comité de bienestar. Hay minutas firmadas por los asistentes.',
-      rasgo: 'Siempre lleva un pañuelo amarillo en el cuello. Escribe con pluma fuente.'
+      rasgo: 'Siempre lleva un pañuelo amarillo en el cuello. Escribe con pluma fuente.',
+      declaracion: 'Dice que solo seguía órdenes de su jefe directo.',
+      secreto: 'Su hermana trabaja en la aseguradora que recibe los datos de MenteSana.',
+      motivo: 'Le prometieron un ascenso si no hacía preguntas.',
+      relaciones: 'Reporta directamente a Carolina Espitia.',
+      acceso: 'Tiene acceso a los registros de bienestar y a la plataforma MenteSana.'
     },
     {
       id: 'edgar',
@@ -14,7 +19,12 @@ const CASO1 = {
       ocupacion: 'Rector Encargado',
       edad: 52,
       coartada: 'Tenía una cena con miembros del consejo directivo. El restaurante lo confirma.',
-      rasgo: 'Tiene un tic nervioso en la mano derecha cuando miente.'
+      rasgo: 'Tiene un tic nervioso en la mano derecha cuando miente.',
+      declaracion: 'Afirma no recordar los detalles de esa conversación de chat.',
+      secreto: 'Está siendo presionado por la aseguradora para entregar datos estudiantiles.',
+      motivo: 'Necesitaba los ingresos extras para cubrir deudas personales.',
+      relaciones: 'Superior de Carolina Espitia. Conoce a Kevin Osorio desde hace años.',
+      acceso: 'Tiene acceso total a todos los sistemas administrativos del campus.'
     },
     {
       id: 'wilson',
@@ -22,7 +32,12 @@ const CASO1 = {
       ocupacion: 'Jefe de Seguridad del Campus',
       edad: 41,
       coartada: 'Estaba de turno en la sala de monitoreo. Los registros de entrada lo respaldan.',
-      rasgo: 'Cojea levemente de la pierna izquierda. Usa un llavero con forma de águila.'
+      rasgo: 'Cojea levemente de la pierna izquierda. Usa un llavero con forma de águila.',
+      declaracion: 'Dice que no revisó las cámaras esa noche porque estaba atendiendo un incidente.',
+      secreto: 'Debe favores personales a Diego Palacio por un préstamo no saldado.',
+      motivo: 'Le pidieron "no ver" lo que pasó esa noche a cambio de borrar su deuda.',
+      relaciones: 'Amigo cercano de Diego Palacio. Reporta a rectoría.',
+      acceso: 'Controla todo el sistema de cámaras y registros de entrada del campus.'
     },
     {
       id: 'kevin',
@@ -30,7 +45,12 @@ const CASO1 = {
       ocupacion: 'Desarrollador de MenteSana',
       edad: 26,
       coartada: 'Estaba subiendo commits al repositorio. Hay marcas de tiempo en el código.',
-      rasgo: 'Usa una sudadera con capucha todos los días, incluso en reuniones formales.'
+      rasgo: 'Usa una sudadera con capucha todos los días, incluso en reuniones formales.',
+      declaracion: 'Dice que solo programó lo que le pidieron, sin saber el propósito final.',
+      secreto: 'Implementó un backdoor en MenteSana para extraer datos sin dejar registro.',
+      motivo: 'Le pagaron un bono extra por incluir la puerta trasera en el código.',
+      relaciones: 'Trabaja para la Vicerrectoría Administrativa. Contacto directo con Carolina.',
+      acceso: 'Acceso total al código fuente y servidores de MenteSana.'
     },
     {
       id: 'diego',
@@ -38,7 +58,12 @@ const CASO1 = {
       ocupacion: 'Coordinador de Obras y Mantenimiento',
       edad: 45,
       coartada: 'Estaba supervisando una obra en el bloque C. El contratista lo confirma.',
-      rasgo: 'Tiene una cicatriz en la ceja izquierda. Fuma en áreas no permitidas.'
+      rasgo: 'Tiene una cicatriz en la ceja izquierda. Fuma en áreas no permitidas.',
+      declaracion: 'Dice que la maquinaria era para trabajos autorizados de jardinería.',
+      secreto: 'Ejecutó el relleno del humedal sin permisos ambientales.',
+      motivo: 'Recibió un pago por debajo de la mesa de parte de la constructora.',
+      relaciones: 'Socio de Wilson en un negocio de seguridad privada. Reporta a rectoría.',
+      acceso: 'Acceso a maquinaria pesada, planos del campus y rutas de servicio.'
     },
     {
       id: 'carolina',
@@ -46,7 +71,12 @@ const CASO1 = {
       ocupacion: 'Vicerrectora Administrativa',
       edad: 38,
       coartada: 'Estaba en una videollamada con la aseguradora. Hay registro de la llamada.',
-      rasgo: 'Usa gafas de carey. Su escritorio está siempre impecable.'
+      rasgo: 'Usa gafas de carey. Su escritorio está siempre impecable.',
+      declaracion: 'Se niega a declarar sin presencia de su abogado.',
+      secreto: 'Es ella quien firmó el contrato con la aseguradora y autorizó los cobros duplicados.',
+      motivo: 'Necesitaba cubrir un desfalco anterior que ella misma cometió.',
+      relaciones: 'Jefe directo de Ana Beltrán y Kevin Osorio. Reporta a Edgar Solano.',
+      acceso: 'Acceso a finanzas, contratos y plataforma MenteSana con permisos de administrador.'
     }
   ],
   evidences: [
@@ -176,5 +206,19 @@ const CASO1 = {
         }
       ]
     }
-  ]
+  ],
+  solution: {
+    responsible_id: 'carolina',
+    responsible: 'carolina',
+    motive: 'Ocultar que accedió ilegalmente a datos estudiantiles de MenteSana y los vendió a una aseguradora.',
+    motiveKey: 'a',
+    methodKey: 'b',
+    method: 'Usó una copia de la tarjeta de acceso de otra persona para ingresar al edificio, y su propio usuario para modificar el archivo financiero. Luego desactivó la cámara CAM-04 durante 40 minutos.',
+    timeline: ['14 marzo: Tomás Vargas solicita información sobre MenteSana', '21 feb: Carolina firma contrato con aseguradora', '13 marzo: Carolina accede al sistema fuera de horario laboral', 'Noche del evento: Wilson desactiva CAM-04 por 40 min', 'Diego ejecuta relleno del humedal con maquinaria pesada'],
+    key_evidence: ['Evidencia 4 (CONTRATO): Contrato firmado por C.E. con la aseguradora', 'Evidencia 6 (NOMINA): Reporte financiero con iniciales C.E. y cobros duplicados', 'Evidencia 3 (CAMARA): Salto de 40 min en cámara CAM-04'],
+    contradiction: 'Carolina dice que estaba en videollamada con la aseguradora, pero el contrato con ellos ya estaba firmado desde febrero. Su coartada no explica por qué necesitaba hablar con ellos precisamente esa noche.',
+    evidences: [3, 4, 5, 6],
+    descartadoKey: 'edgar',
+    false_leads: ['Edgar Solano aparece en el chat sospechoso pero solo siguió el plan de Carolina', 'Diego coordinó la maquinaria del humedal pero no participó en el desfalco']
+  }
 };

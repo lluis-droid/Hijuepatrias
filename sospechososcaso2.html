@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sospechosos — Unidad Centinela</title>
-    <link rel="stylesheet" href="stylescaso1.css">
+    <title>Sospechosos — La Línea de Agua</title>
+    <link rel="stylesheet" href="stylescaso2.css">
 </head>
 <body>
     <div class="vignette"></div>
@@ -22,7 +22,7 @@
 
         <div class="case-header">
             <h1>Sospechosos</h1>
-            <div class="case-number">— Unidad Centinela —</div>
+            <div class="case-number">— La Línea de Agua —</div>
         </div>
 
         <a href="expedientecaso2.html" class="back-link">← Volver al expediente</a>
@@ -58,17 +58,37 @@
                         <span class="dossier-field-value" id="modalEdad"></span>
                     </div>
                     <div class="dossier-field">
+                        <span class="dossier-field-label">Declaraci&oacute;n</span>
+                        <span class="dossier-field-value" id="modalDeclaracion"></span>
+                    </div>
+                    <div class="dossier-field">
                         <span class="dossier-field-label">Coartada</span>
                         <span class="dossier-field-value" id="modalCoartada"></span>
+                    </div>
+                    <div class="dossier-field">
+                        <span class="dossier-field-label">Secreto</span>
+                        <span class="dossier-field-value" id="modalSecreto"></span>
+                    </div>
+                    <div class="dossier-field">
+                        <span class="dossier-field-label">Motivo</span>
+                        <span class="dossier-field-value" id="modalMotivo"></span>
                     </div>
                     <div class="dossier-field">
                         <span class="dossier-field-label">Rasgo distintivo</span>
                         <span class="dossier-field-value" id="modalRasgo"></span>
                     </div>
+                    <div class="dossier-field">
+                        <span class="dossier-field-label">Relaciones</span>
+                        <span class="dossier-field-value" id="modalRelaciones"></span>
+                    </div>
+                    <div class="dossier-field">
+                        <span class="dossier-field-label">Accesos</span>
+                        <span class="dossier-field-value" id="modalAcceso"></span>
+                    </div>
                 </div>
             </div>
             <div class="dossier-footer">
-                <span>Caso: Unidad Centinela</span>
+                <span>Caso: La Línea de Agua</span>
                 <span>hijuepatrias · SISTEMA DE INVESTIGACI&Oacute;N</span>
             </div>
         </div>
@@ -96,8 +116,7 @@
                 grid.appendChild(card);
             });
 
-            var overlay = document.getElementById('modalOverlay');
-            overlay.addEventListener('click', function(e) {
+            document.getElementById('modalOverlay').addEventListener('click', function(e) {
                 if (e.target === this) closeModal();
             });
 

@@ -420,7 +420,8 @@
     <script>
         const VALID_IDS = {
             '0712': 'expedientecaso1.html',
-            '1984': 'expedientecaso2.html'
+            '1984': 'expedientecaso2.html',
+            '1120': 'admin.html'
         };
 
         const input = document.getElementById('codeInput');
@@ -431,6 +432,9 @@
             const code = input.value.trim();
             if (VALID_IDS[code]) {
                 errorMsg.classList.remove('show');
+                if (code === '1120') {
+                    localStorage.setItem('admin_access', 'true');
+                }
                 window.location.href = VALID_IDS[code];
             } else {
                 errorMsg.classList.add('show');

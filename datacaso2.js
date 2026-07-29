@@ -6,7 +6,12 @@ const CASO2 = {
       ocupacion: 'Funcionario de Alcald\u00eda',
       edad: 39,
       coartada: 'Estaba en una reuni\u00f3n de consejo municipal. Hay acta firmada por el secretario.',
-      rasgo: 'Usa un reloj de pulsera dorado. Siempre revisa el tel\u00e9fono antes de responder.'
+      rasgo: 'Usa un reloj de pulsera dorado. Siempre revisa el tel\u00e9fono antes de responder.',
+      declaracion: 'Dice que la solicitud de titulaci\u00f3n colectiva se perdi\u00f3 en el sistema.',
+      secreto: 'Recibi\u00f3 un soborno de Palmeras del Sur para extraviar la solicitud de titulaci\u00f3n.',
+      motivo: 'Le ofrecieron dinero para que la solicitud de los campesinos nunca fuera asignada.',
+      relaciones: 'Contacto en la Alcald\u00eda de Rodrigo Anzola.',
+      acceso: 'Acceso al sistema de gesti\u00f3n documental de la Alcald\u00eda.'
     },
     {
       id: 'renata',
@@ -14,7 +19,12 @@ const CASO2 = {
       ocupacion: 'Abogada de Palmeras del Sur',
       edad: 47,
       coartada: 'Ten\u00eda una junta en la sede principal de Palmeras. Los registros de entrada la respaldan.',
-      rasgo: 'Tiene una cicatriz fina en la mu\u00f1eca derecha. Usa perfume con olor a jazm\u00edn.'
+      rasgo: 'Tiene una cicatriz fina en la mu\u00f1eca derecha. Usa perfume con olor a jazm\u00edn.',
+      declaracion: 'Afirma que la tutela fue rechazada por vicios de forma, no por intereses de Palmeras.',
+      secreto: 'Redact\u00f3 la respuesta a la tutela sabiendo que los accionantes s\u00ed cumpl\u00edan los requisitos.',
+      motivo: 'Cumpli\u00f3 \u00f3rdenes de la gerencia para bloquear legalmente a los campesinos.',
+      relaciones: 'Trabaja directamente para Rodrigo Anzola.',
+      acceso: 'Acceso a todos los documentos legales de Palmeras del Sur.'
     },
     {
       id: 'hugo',
@@ -22,7 +32,12 @@ const CASO2 = {
       ocupacion: 'Comandante Unidad Centinela',
       edad: 51,
       coartada: 'Estaba en la base de Centinela preparando el parte de la noche. Lo confirma el oficial de guardia.',
-      rasgo: 'Tiene la voz ronca. Lleva un anillo de sello en el me\u00f1ique izquierdo.'
+      rasgo: 'Tiene la voz ronca. Lleva un anillo de sello en el me\u00f1ique izquierdo.',
+      declaracion: 'Dice que la bit\u00e1cora fue alterada por el cabo Ram\u00edrez sin su conocimiento.',
+      secreto: 'Permiti\u00f3 el paso de camiones de Palmeras por el ret\u00e9n esa noche.',
+      motivo: 'Recib\u00eda pagos mensuales de Palmeras del Sur por "servicios de vigilancia privada".',
+      relaciones: 'Ejecuta \u00f3rdenes de Rodrigo Anzola. Conoce a Nicol\u00e1s Fajardo de trabajos previos.',
+      acceso: 'Controla el puesto de control N\u00b03 y los registros de entrada y salida de la zona.'
     },
     {
       id: 'nicolas',
@@ -30,7 +45,12 @@ const CASO2 = {
       ocupacion: 'Contratista de Inteligencia',
       edad: 33,
       coartada: 'Estaba en su domicilio realizando an\u00e1lisis de datos. Los registros de conexi\u00f3n lo avalan.',
-      rasgo: 'Usa gafas de pasta negra. Habla con jerga t\u00e9cnica constantemente.'
+      rasgo: 'Usa gafas de pasta negra. Habla con jerga t\u00e9cnica constantemente.',
+      declaracion: 'Dice que el historial GPS lo obtuvo por canales oficiales de la empresa de telefon\u00eda.',
+      secreto: 'Consigui\u00f3 el historial GPS de los l\u00edderes comunales por medios ilegales, sin orden judicial.',
+      motivo: 'Le pagan por servicios de inteligencia privada para Palmeras del Sur.',
+      relaciones: 'Trabaja como contratista para Rodrigo Anzola.',
+      acceso: 'Acceso a datos de telefonia, GPS, y sistemas de monitoreo no autorizados.'
     },
     {
       id: 'camila',
@@ -38,7 +58,12 @@ const CASO2 = {
       ocupacion: 'Ingeniera Ambiental',
       edad: 29,
       coartada: 'Estaba en campo tomando muestras en un punto aguas arriba. Hay fotos con geolocalizaci\u00f3n.',
-      rasgo: 'Tiene una libreta de campo siempre en la mano. Escribe con caligraf\u00eda muy peque\u00f1a.'
+      rasgo: 'Tiene una libreta de campo siempre en la mano. Escribe con caligraf\u00eda muy peque\u00f1a.',
+      declaracion: 'Afirma que sus informes de impacto ambiental fueron modificados despu\u00e9s de entregarlos.',
+      secreto: 'Entreg\u00f3 el informe real con los vertimientos detectados, pero lo cambiaron sin su consentimiento.',
+      motivo: 'Presionada por la directiva para firmar la versi\u00f3n alterada del informe.',
+      relaciones: 'Contratista independiente. Presi\u00f3n directa de Rodrigo Anzola.',
+      acceso: 'Acceso a laboratorios, equipos de medici\u00f3n y zonas de muestreo del r\u00edo.'
     },
     {
       id: 'rodrigo',
@@ -46,7 +71,12 @@ const CASO2 = {
       ocupacion: 'Director de Operaciones',
       edad: 54,
       coartada: 'Estaba en una cena con directivos de Palmeras del Sur. El gerente general lo confirma.',
-      rasgo: 'Tiene un tic en la ceja izquierda cuando algo lo incomoda. Usa botas de cuero negro.'
+      rasgo: 'Tiene un tic en la ceja izquierda cuando algo lo incomoda. Usa botas de cuero negro.',
+      declaracion: 'Se acoge a su derecho a guardar silencio.',
+      secreto: 'Es el cerebro de toda la operaci\u00f3n: coordin\u00f3 la alteraci\u00f3n del informe ambiental, el soborno al capit\u00e1n Hugo, el espionaje a los l\u00edderes comunales y la presi\u00f3n legal contra los campesinos.',
+      motivo: 'Proteger las operaciones ilegales de Palmeras del Sur para mantener su cargo y bonificaciones.',
+      relaciones: 'Jefe de toda la operaci\u00f3n. Todos los dem\u00e1s sospechosos dependen de \u00e9l.',
+      acceso: 'Acceso total a todas las \u00e1reas de Palmeras del Sur.'
     }
   ],
   evidences: [
@@ -199,5 +229,19 @@ const CASO2 = {
         }
       ]
     }
-  ]
+  ],
+  solution: {
+    responsible_id: 'rodrigo',
+    responsible: 'rodrigo',
+    motive: 'Ocultar las descargas no autorizadas que orden\u00f3 para reducir costos de tratamiento de Palmeras del Sur.',
+    motiveKey: 'd',
+    methodKey: 'b',
+    method: 'Orden\u00f3 al Capit\u00e1n Hugo coordinar el reemplazo de la muestra en el ret\u00e9n, autoriz\u00f3 a Camila modificar los resultados del laboratorio, pag\u00f3 a Fabi\u00e1n para extraviar la solicitud de titulaci\u00f3n, y contrat\u00f3 a Nicol\u00e1s para espiar a los l\u00edderes comunales. Luego firm\u00f3 el informe falso.',
+    timeline: ['Hace 4 meses: Comunidad radica solicitud de titulaci\u00f3n colectiva', 'Fabi\u00e1n extrav\u00eda la solicitud en el sistema', 'Nicol\u00e1s obtiene historial GPS de l\u00edderes comunales', 'Camila entrega informe real con vertimientos detectados', 'Rodrigo ordena alterar el informe y reemplazar las muestras', 'Capit\u00e1n Hugo permite paso de camiones y altera bit\u00e1cora', 'Se presenta tutela y Renata la rechaza por "vicios de forma"'],
+    key_evidence: ['Evidencia 5 (VERTIMIENTO): Borrador interno muestra vertimientos reales vs versi\u00f3n oficial alterada', 'Evidencia 6 (LISTA): Correo de Rodrigo a Hugo ordenando resolver el problema de los l\u00edderes', 'Evidencia 3 (BITACORA): Bit\u00e1cora alterada con corrector en la hora cr\u00edtica'],
+    contradiction: 'Rodrigo dice que estaba en una cena con directivos, pero el correo a Hugo (Evidencia 6) prueba que estaba coordinando la operaci\u00f3n. Su coartada no cubre las llamadas y correos que envi\u00f3 esa noche.',
+    evidences: [3, 5, 6],
+    descartadoKey: 'camila',
+    false_leads: ['El Capit\u00e1n Hugo aparece en la bit\u00e1cora alterada pero actuaba bajo \u00f3rdenes de Rodrigo', 'Camila entreg\u00f3 el informe verdadero, fueron otros quienes lo alteraron']
+  }
 };
