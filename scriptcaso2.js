@@ -108,6 +108,15 @@ function closeModal() {
   document.body.style.overflow = '';
 }
 
+/* ===== Persistencia (localStorage) ===== */
+function isUnlocked(evId) {
+  return localStorage.getItem('caso2_ev_' + evId) === 'true';
+}
+
+function setUnlocked(evId) {
+  localStorage.setItem('caso2_ev_' + evId, 'true');
+}
+
 /* ===== Vault ===== */
 function setupVault(evId) {
   var ev = getEvidencia(evId);
@@ -118,17 +127,29 @@ function setupVault(evId) {
   var input = document.getElementById('keywordInput');
   var btn = document.getElementById('unlockBtn');
   var errorEl = document.getElementById('vaultError');
+  var lockIcon = document.querySelector('.vault .lock-icon');
+
+  if (lockIcon) lockIcon.classList.add('pulse');
+
+  if (isUnlocked(evId)) {
+    vaultScreen.style.display = 'none';
+    contentArea.classList.add('revealed');
+    renderEvidence(ev, contentArea);
+    return;
+  }
 
   function tryUnlock() {
     var val = input ? input.value.trim().toUpperCase() : '';
     if (val === ev.keyword) {
       errorEl.classList.remove('show');
+      setUnlocked(evId);
       vaultScreen.classList.add('glitch');
+      showUnlockStamp();
       setTimeout(function() {
         vaultScreen.style.display = 'none';
         contentArea.classList.add('revealed');
         renderEvidence(ev, contentArea);
-      }, 400);
+      }, 600);
     } else {
       errorEl.textContent = 'Palabra clave incorrecta';
       errorEl.classList.add('show');
@@ -147,6 +168,21 @@ function setupVault(evId) {
       if (e.key === 'Enter') { e.preventDefault(); tryUnlock(); }
     });
   }
+}
+
+function showUnlockStamp() {
+  var stamp = document.querySelector('.unlock-stamp');
+  if (!stamp) {
+    stamp = document.createElement('div');
+    stamp.className = 'unlock-stamp';
+    stamp.textContent = 'Acceso concedido';
+    document.body.appendChild(stamp);
+  }
+  stamp.textContent = 'Acceso concedido';
+  stamp.classList.remove('active');
+  void stamp.offsetWidth;
+  stamp.classList.add('active');
+  setTimeout(function() { stamp.classList.remove('active'); }, 800);
 }
 
 function renderEvidence(ev, container) {
@@ -335,6 +371,44 @@ function renderDocumento(ev, container) {
   html += '</div>';
   container.innerHTML = html;
 }
+
+/* ===== Inject environment details ===== */
+(function() {
+  if (document.querySelector('.scanlines')) return;
+  var sl = document.createElement('div');
+  sl.className = 'scanlines';
+  document.body.appendChild(sl);
+
+  for (var i = 0; i < 6; i++) {
+    var m = document.createElement('div');
+    m.className = 'dust-mote';
+    document.body.appendChild(m);
+  }
+
+  var cctv = document.createElement('div');
+  cctv.className = 'cctv-stamp flicker';
+  var d = new Date();
+  var pad = function(n) { return n < 10 ? '0' + n : n; };
+  cctv.textContent = 'CAM-' + pad(1 + Math.floor(Math.random() * 8)) + '  ' + pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds());
+  document.body.appendChild(cctv);
+
+  /* Typewriter effect on back-links */
+  setTimeout(function() {
+    var links = document.querySelectorAll('.back-link');
+    links.forEach(function(el) {
+      var txt = el.textContent;
+      el.textContent = '';
+      var i = 0;
+      (function type() {
+        if (i < txt.length) {
+          el.textContent += txt.charAt(i);
+          i++;
+          setTimeout(type, 30 + Math.random() * 20);
+        }
+      })();
+    });
+  }, 600);
+})();
 
 /* ===== Console easter egg ===== */
 console.log('%c[ARCHIVO DEL CASO]', 'color:#8b2020;font-weight:bold;font-size:13px;');
