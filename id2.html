@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CASO N° 1984</title>
+    <title>CASO N° 1984 — hijuepatrias</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Special+Elite&display=swap');
         * { margin:0; padding:0; box-sizing:border-box; }
@@ -42,6 +42,33 @@
             background:rgba(200,180,140,0.5);
             border:1px solid rgba(0,0,0,0.1); opacity:0.7;
         }
+        .watermark {
+            position:absolute;
+            top:50%; left:50%;
+            transform:translate(-50%,-50%) rotate(-25deg);
+            font-size:70px;
+            color:rgba(0,0,0,0.03);
+            letter-spacing:10px;
+            text-transform:uppercase;
+            pointer-events:none;
+            white-space:nowrap;
+            font-family:'Courier New',monospace;
+        }
+        .logo-bar {
+            display:flex;
+            align-items:center;
+            gap:8px;
+            margin-bottom:20px;
+            padding-bottom:10px;
+            border-bottom:1px dashed rgba(42,26,10,0.15);
+        }
+        .logo-bar img { height:22px; width:auto; opacity:0.5; }
+        .logo-bar span {
+            font-size:10px;
+            color:rgba(42,26,10,0.35);
+            letter-spacing:2px;
+            text-transform:uppercase;
+        }
         .case-header h1 {
             font-size:20px; color:#2a1a0a; letter-spacing:4px;
             font-weight:normal; border-bottom:2px solid #2a1a0a;
@@ -68,6 +95,11 @@
     <div class="noise"></div>
     <div class="notebook">
         <div class="tape"></div>
+        <div class="watermark">HIJUEPATRIAS</div>
+        <div class="logo-bar">
+            <img src="logo.png" alt="">
+            <span>hijuepatrias · inteligencia &amp; estrategia</span>
+        </div>
         <div class="case-header">
             <h1>Expediente N° 1984</h1>
             <div class="case-number">— NIVEL DE ACCESO: MÁXIMO —</div>

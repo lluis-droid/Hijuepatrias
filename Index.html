@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CASO N° ████</title>
+    <title>hijuepatrias — CASO N° ████</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Special+Elite&display=swap');
 
@@ -111,6 +111,43 @@
             background: rgba(200, 180, 140, 0.5);
             border: 1px solid rgba(0,0,0,0.1);
             opacity: 0.7;
+        }
+
+        .watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-25deg);
+            font-size: 60px;
+            font-weight: bold;
+            color: rgba(0,0,0,0.04);
+            letter-spacing: 8px;
+            text-transform: uppercase;
+            pointer-events: none;
+            white-space: nowrap;
+            font-family: 'Courier New', monospace;
+        }
+
+        .logo-bar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 1px dashed rgba(42, 26, 10, 0.2);
+            padding-bottom: 14px;
+        }
+
+        .logo-bar img {
+            height: 28px;
+            width: auto;
+            opacity: 0.7;
+        }
+
+        .logo-bar span {
+            font-size: 12px;
+            color: rgba(42, 26, 10, 0.5);
+            letter-spacing: 3px;
+            text-transform: uppercase;
         }
 
         .case-header {
@@ -338,7 +375,13 @@
 
     <div class="notebook">
         <div class="tape"></div>
+        <div class="watermark">HIJUEPATRIAS</div>
         <div class="stamp">confidencial</div>
+
+        <div class="logo-bar">
+            <img src="logo.png" alt="">
+            <span>hijuepatrias · inteligencia &amp; estrategia</span>
+        </div>
 
         <div class="case-header">
             <h1>Archivo del Caso</h1>
@@ -364,7 +407,7 @@
 
         <p class="error-msg" id="errorMsg">✗ Código inválido. Acceso denegado.</p>
 
-        <div class="footer-note">— Evidencia clasificada —</div>
+        <div class="footer-note">— hijuepatrias · Evidencia clasificada —</div>
     </div>
 
     <svg class="string-line" style="top:10%;left:-5%;width:30%;height:3px;overflow:visible" viewBox="0 0 300 3" preserveAspectRatio="none">
