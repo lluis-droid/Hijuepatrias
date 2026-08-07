@@ -27,7 +27,8 @@
 
         <div class="notebook-content" id="adminContent">
             <p class="admin-subtitle" id="adminStatus"></p>
-            <a href="expedientecaso1.html" class="admin-back">← Volver al expediente</a>
+            <a href="expedientecaso1.html" class="admin-back" id="adminBackLink">← Volver al expediente</a>
+            <a href="Index.html" class="admin-back" style="margin-left:14px;">↰ Salir del panel</a>
 
             <div id="adminCaseSelect" class="admin-case-select">
                 <div class="admin-case-btn" onclick="selectCase(1)">
@@ -60,6 +61,7 @@
             if (!data) return;
 
             document.getElementById('adminCaseSelect').classList.add('admin-hidden');
+            document.getElementById('adminBackLink').setAttribute('href', 'expedientecaso' + num + '.html');
             var panel = document.getElementById('adminPanel');
             panel.classList.remove('admin-hidden');
             panel.innerHTML = renderCase(key, data, num);
@@ -74,12 +76,26 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
+        function toggleSection(btn) {
+            btn.parentElement.classList.toggle('open');
+        }
+
+        function adminAccordion(title, body, open) {
+            var cls = open ? ' admin-acc open' : ' admin-acc';
+            return '<div class="' + cls + '">' +
+                '<button class="admin-acc-head" onclick="toggleSection(this)">' +
+                '<span>' + title + '</span><span class="admin-acc-arrow">▾</span>' +
+                '</button><div class="admin-acc-body">' + body + '</div></div>';
+        }
+
         function renderCase(key, data, num) {
             var sol = data.solution;
             var sName = sol.responsible;
 
-            var html = '<div class="admin-section"><a href="#" class="admin-back" onclick="backToCases();return false;">← Seleccionar otro caso</a>';
-            html += '<h3>CASO ' + num + ' — ' + (num === 1 ? 'El Archivo 17' : 'La Línea de Agua') + '</h3></div>';
+            var html = '<div class="admin-section">';
+            html += '<a href="#" class="admin-back" onclick="backToCases();return false;">← Seleccionar otro caso</a>';
+            html += '<h3>CASO ' + num + ' — ' + (num === 1 ? 'El Archivo 17' : 'La Línea de Agua') + '</h3>';
+            html += '<div class="admin-answer">RESPONSABLE: <strong>' + sName + '</strong></div></div>';
 
             html += renderSection1(sol, sName);
             html += renderSection2(data.suspects);
@@ -96,130 +112,115 @@
         }
 
         function renderSection1(sol, sName) {
-            var html = '<div class="admin-section">';
-            html += '<h3>1. SOLUCIÓN COMPLETA</h3>';
-            html += '<div class="admin-card">';
-            html += '<span class="admin-label">RESPONSABLE</span>';
-            html += '<div class="admin-value" style="font-size:1.1rem;color:#8b2020;font-weight:bold;">' + sName + '</div>';
-            html += '<span class="admin-label">MOTIVO</span>';
-            html += '<div class="admin-value">' + sol.motive + '</div>';
-            html += '<span class="admin-label">MÉTODO</span>';
-            html += '<div class="admin-value">' + sol.method + '</div>';
-            html += '<span class="admin-label">OBJETIVO</span>';
-            html += '<div class="admin-value">' + sol.objective + '</div>';
-            html += '</div></div>';
-            return html;
+            var body = '<div class="admin-card">';
+            body += '<span class="admin-label">RESPONSABLE</span>';
+            body += '<div class="admin-value" style="font-size:1.1rem;color:#8b2020;font-weight:bold;">' + sName + '</div>';
+            body += '<span class="admin-label">MOTIVO</span>';
+            body += '<div class="admin-value">' + sol.motive + '</div>';
+            body += '<span class="admin-label">MÉTODO</span>';
+            body += '<div class="admin-value">' + sol.method + '</div>';
+            body += '<span class="admin-label">OBJETIVO</span>';
+            body += '<div class="admin-value">' + sol.objective + '</div>';
+            body += '</div>';
+            return adminAccordion('1. Solución completa', body, true);
         }
 
         function renderSection2(suspects) {
-            var html = '<div class="admin-section">';
-            html += '<h3>2. EXPLICACIÓN DE CADA SOSPECHOSO</h3>';
+            var body = '';
             suspects.forEach(function(s) {
                 var guiltyText = s.culpable ? 'SÍ — Responsable del caso' : 'NO — Pieza del misterio';
                 var guiltyColor = s.culpable ? 'color:#8b2020;font-weight:bold;' : 'color:#006400;';
-                html += '<div class="admin-card">';
-                html += '<div class="admin-row"><div>';
-                html += '<h4>' + s.nombre + '</h4>';
-                html += '<span class="admin-label" style="' + guiltyColor + '">¿Es culpable? ' + guiltyText + '</span>';
-                html += '<span class="admin-label">Qué estaba ocultando</span>';
-                html += '<div class="admin-value">' + s.ocultando + '</div>';
-                html += '</div><div>';
-                html += '<span class="admin-label">Por qué parecía culpable</span>';
-                html += '<div class="admin-value">' + s.parece_culpable + '</div>';
-                html += '<span class="admin-label">Por qué finalmente se descarta</span>';
-                html += '<div class="admin-value">' + s.se_descarta + '</div>';
-                html += '<span class="admin-label">Relación con el caso</span>';
-                html += '<div class="admin-value">' + s.papel_real + '</div>';
-                html += '</div></div></div>';
+                body += '<div class="admin-card">';
+                body += '<div class="admin-row"><div>';
+                body += '<h4>' + s.nombre + '</h4>';
+                body += '<span class="admin-label" style="' + guiltyColor + '">¿Es culpable? ' + guiltyText + '</span>';
+                body += '<span class="admin-label">Qué estaba ocultando</span>';
+                body += '<div class="admin-value">' + s.ocultando + '</div>';
+                body += '</div><div>';
+                body += '<span class="admin-label">Por qué parecía culpable</span>';
+                body += '<div class="admin-value">' + s.parece_culpable + '</div>';
+                body += '<span class="admin-label">Por qué finalmente se descarta</span>';
+                body += '<div class="admin-value">' + s.se_descarta + '</div>';
+                body += '<span class="admin-label">Relación con el caso</span>';
+                body += '<div class="admin-value">' + s.papel_real + '</div>';
+                body += '</div></div></div>';
             });
-            html += '</div>';
-            return html;
+            return adminAccordion('2. Cada sospechoso', body, false);
         }
 
         function renderSection3(evidences) {
-            var html = '<div class="admin-section">';
-            html += '<h3>3. EXPLICACIÓN DE CADA EVIDENCIA</h3>';
+            var body = '';
             evidences.forEach(function(ev) {
-                html += '<div class="admin-card">';
-                html += '<h4>Evidencia ' + ev.id + ' (clave: ' + ev.keyword + ')</h4>';
-                html += '<div class="admin-grid"><div>';
-                html += '<span class="admin-label">Qué contiene realmente</span>';
-                html += '<div class="admin-value">' + ev.contiene + '</div>';
-                html += '<span class="admin-label">Qué debería notar el jugador</span>';
-                html += '<div class="admin-value">' + ev.notar + '</div>';
-                html += '<span class="admin-label">Con qué otras evidencias se conecta</span>';
-                html += '<div class="admin-value">' + ev.conecta_con.map(function(e) { return 'Evidencia ' + e; }).join(', ') + '</div>';
-                html += '<span class="admin-label">Qué sospechoso afecta</span>';
-                html += '<div class="admin-value">' + ev.afecta.join(', ') + '</div>';
-                html += '</div><div>';
-                html += '<span class="admin-label">Qué hipótesis permite crear</span>';
-                html += '<div class="admin-value">' + ev.permite_hipotesis + '</div>';
-                html += '<span class="admin-label">Qué hipótesis permite descartar</span>';
-                html += '<div class="admin-value">' + ev.descarta_hipotesis + '</div>';
-                html += '<span class="admin-label">Cuál es la deducción correcta</span>';
-                html += '<div class="admin-value" style="color:#8b2020;">' + ev.deduccion + '</div>';
-                html += '</div></div></div>';
+                body += '<div class="admin-card">';
+                body += '<h4>Evidencia ' + ev.id + ' (clave: ' + ev.keyword + ')</h4>';
+                body += '<div class="admin-grid"><div>';
+                body += '<span class="admin-label">Qué contiene realmente</span>';
+                body += '<div class="admin-value">' + ev.contiene + '</div>';
+                body += '<span class="admin-label">Qué debería notar el jugador</span>';
+                body += '<div class="admin-value">' + ev.notar + '</div>';
+                body += '<span class="admin-label">Con qué otras evidencias se conecta</span>';
+                body += '<div class="admin-value">' + ev.conecta_con.map(function(e) { return 'Evidencia ' + e; }).join(', ') + '</div>';
+                body += '<span class="admin-label">Qué sospechoso afecta</span>';
+                body += '<div class="admin-value">' + ev.afecta.join(', ') + '</div>';
+                body += '</div><div>';
+                body += '<span class="admin-label">Qué hipótesis permite crear</span>';
+                body += '<div class="admin-value">' + ev.permite_hipotesis + '</div>';
+                body += '<span class="admin-label">Qué hipótesis permite descartar</span>';
+                body += '<div class="admin-value">' + ev.descarta_hipotesis + '</div>';
+                body += '<span class="admin-label">Cuál es la deducción correcta</span>';
+                body += '<div class="admin-value" style="color:#8b2020;">' + ev.deduccion + '</div>';
+                body += '</div></div></div>';
             });
-            html += '</div>';
-            return html;
+            return adminAccordion('3. Cada evidencia', body, false);
         }
 
         function renderSection4(connections) {
-            var html = '<div class="admin-section">';
-            html += '<h3>4. MAPA DE CONEXIONES</h3>';
-            html += '<p class="admin-subtitle">Sospechosos ↔ Evidencias ↔ Fechas ↔ Lugares ↔ Objetos ↔ Acontecimientos</p>';
-            html += '<div class="admin-map">' + connections.join('\n') + '</div>';
-            html += '</div>';
-            return html;
+            var body = '<p class="admin-subtitle">Sospechosos ↔ Evidencias ↔ Fechas ↔ Lugares ↔ Objetos ↔ Acontecimientos</p>';
+            body += '<div class="admin-map">' + connections.join('\n') + '</div>';
+            return adminAccordion('4. Mapa de conexiones', body, false);
         }
 
         function renderSection5(timeline) {
-            var html = '<div class="admin-section">';
-            html += '<h3>5. CRONOLOGÍA REAL</h3>';
+            var body = '';
             timeline.forEach(function(t) {
                 var tagClass = t.type === 'direct' ? 'admin-tag-direct' : 'admin-tag-deduce';
                 var tagText = t.type === 'direct' ? 'DIRECTO' : 'DEDUCIR';
                 var evText = t.evidence ? 'Ev ' + t.evidence : '';
-                html += '<div class="admin-timeline-entry">';
-                html += '<div class="admin-timeline-time">' + t.time + '</div>';
-                html += '<div>';
-                html += '<div class="admin-timeline-desc">' + t.event + '</div>';
-                html += '<div><span class="admin-timeline-tag ' + tagClass + '">' + tagText + '</span>';
-                if (evText) html += ' <span class="admin-timeline-tag" style="border-color:#8b7a5a;color:#8b7a5a;">' + evText + '</span>';
-                html += ' <span style="font-size:0.65rem;color:#8b7a5a;">— ' + t.involved + '</span>';
-                html += '</div></div></div>';
+                body += '<div class="admin-timeline-entry">';
+                body += '<div class="admin-timeline-time">' + t.time + '</div>';
+                body += '<div>';
+                body += '<div class="admin-timeline-desc">' + t.event + '</div>';
+                body += '<div><span class="admin-timeline-tag ' + tagClass + '">' + tagText + '</span>';
+                if (evText) body += ' <span class="admin-timeline-tag" style="border-color:#8b7a5a;color:#8b7a5a;">' + evText + '</span>';
+                body += ' <span style="font-size:0.65rem;color:#8b7a5a;">— ' + t.involved + '</span>';
+                body += '</div></div></div>';
             });
-            html += '</div>';
-            return html;
+            return adminAccordion('5. Cronología real', body, false);
         }
 
         function renderSection6(theories) {
-            var html = '<div class="admin-section">';
-            html += '<h3>6. HIPÓTESIS INCORRECTAS (Teorías Falsas)</h3>';
+            var body = '';
             theories.forEach(function(t) {
-                html += '<div class="admin-card">';
-                html += '<h4>' + t.teoria + '</h4>';
-                html += '<span class="admin-label">Por qué parece correcta</span>';
-                html += '<div class="admin-value">' + t.parece_correcta + '</div>';
-                html += '<span class="admin-label">Qué evidencia la contradice</span>';
-                html += '<div class="admin-value">' + t.contradice + '</div>';
-                html += '<span class="admin-label">Cómo puede descubrirse que es falsa</span>';
-                html += '<div class="admin-value">' + t.descubrir + '</div>';
-                html += '</div>';
+                body += '<div class="admin-card">';
+                body += '<h4>' + t.teoria + '</h4>';
+                body += '<span class="admin-label">Por qué parece correcta</span>';
+                body += '<div class="admin-value">' + t.parece_correcta + '</div>';
+                body += '<span class="admin-label">Qué evidencia la contradice</span>';
+                body += '<div class="admin-value">' + t.contradice + '</div>';
+                body += '<span class="admin-label">Cómo puede descubrirse que es falsa</span>';
+                body += '<div class="admin-value">' + t.descubrir + '</div>';
+                body += '</div>';
             });
-            html += '</div>';
-            return html;
+            return adminAccordion('6. Teorías falsas', body, false);
         }
 
         function renderSection7(steps) {
-            var html = '<div class="admin-section">';
-            html += '<h3>7. CÓMO DEBERÍA RESOLVERSE (Ruta Lógica)</h3>';
-            html += '<div class="step-list">';
+            var body = '<div class="step-list">';
             steps.forEach(function(s) {
-                html += '<div class="step-item">' + s + '</div>';
+                body += '<div class="step-item">' + s + '</div>';
             });
-            html += '</div></div>';
-            return html;
+            body += '</div>';
+            return adminAccordion('7. Ruta lógica de resolución', body, false);
         }
 
         function renderSection8(answers, suspects) {
@@ -229,56 +230,49 @@
                 if (s.id === answers.responsible) respName = s.nombre;
                 if (s.id === answers.descartadoKey) descName = s.nombre;
             });
-            var html = '<div class="admin-section">';
-            html += '<h3>8. RESPUESTAS DEL JUEGO (Pantalla Final)</h3>';
-            html += '<div class="admin-card"><div class="admin-grid"><div>';
-            html += '<span class="admin-label">Responsable</span>';
-            html += '<div class="admin-value admin-correct">' + respName + ' (ID: ' + answers.responsible + ')</div>';
-            html += '<span class="admin-label">Motivo (opción correcta)</span>';
-            html += '<div class="admin-value admin-correct">' + answers.motiveKey + '</div>';
-            html += '<span class="admin-label">Método (opción correcta)</span>';
-            html += '<div class="admin-value admin-correct">' + answers.methodKey + '</div>';
-            html += '</div><div>';
-            html += '<span class="admin-label">Evidencias decisivas</span>';
-            html += '<div class="admin-value admin-correct">' + answers.evidences.join(', ') + '</div>';
-            html += '<span class="admin-label">Sospechoso a descartar</span>';
-            html += '<div class="admin-value admin-correct">' + descName + ' (ID: ' + answers.descartadoKey + ')</div>';
-            html += '</div></div></div></div>';
-            return html;
+            var body = '<div class="admin-card"><div class="admin-grid"><div>';
+            body += '<span class="admin-label">Responsable</span>';
+            body += '<div class="admin-value admin-correct">' + respName + ' (ID: ' + answers.responsible + ')</div>';
+            body += '<span class="admin-label">Motivo (opción correcta)</span>';
+            body += '<div class="admin-value admin-correct">' + answers.motiveKey + '</div>';
+            body += '<span class="admin-label">Método (opción correcta)</span>';
+            body += '<div class="admin-value admin-correct">' + answers.methodKey + '</div>';
+            body += '</div><div>';
+            body += '<span class="admin-label">Evidencias decisivas</span>';
+            body += '<div class="admin-value admin-correct">' + answers.evidences.join(', ') + '</div>';
+            body += '<span class="admin-label">Sospechoso a descartar</span>';
+            body += '<div class="admin-value admin-correct">' + descName + ' (ID: ' + answers.descartadoKey + ')</div>';
+            body += '</div></div></div>';
+            return adminAccordion('8. Respuestas del juego', body, false);
         }
 
         function renderSection9(key, num) {
-            var html = '<div class="admin-section">';
-            html += '<h3>9. CONTROL DE CASO</h3>';
-            html += '<div class="admin-controls">';
-            html += '<button class="admin-ctrl-btn" onclick="resetCase(' + num + ')">Reiniciar progreso Caso ' + num + '</button>';
-            html += '<button class="admin-ctrl-btn" onclick="unlockAll(' + num + ')">Desbloquear todas las evidencias</button>';
-            html += '<button class="admin-ctrl-btn danger" onclick="lockAll(' + num + ')">Bloquear todas las evidencias</button>';
-            html += '</div>';
-            html += '<div id="adminCtrlMsg" style="font-size:0.7rem;color:#8b7a5a;margin-top:8px;"></div>';
-            html += '</div>';
-            return html;
+            var body = '<div class="admin-controls">';
+            body += '<button class="admin-ctrl-btn" onclick="resetCase(' + num + ')">Reiniciar progreso Caso ' + num + '</button>';
+            body += '<button class="admin-ctrl-btn" onclick="unlockAll(' + num + ')">Desbloquear todas las evidencias</button>';
+            body += '<button class="admin-ctrl-btn danger" onclick="lockAll(' + num + ')">Bloquear todas las evidencias</button>';
+            body += '</div>';
+            body += '<div id="adminCtrlMsg" style="font-size:0.7rem;color:#8b7a5a;margin-top:8px;"></div>';
+            return adminAccordion('9. Control de caso', body, true);
         }
 
         function renderSection10(data) {
-            var html = '<div class="admin-section">';
-            html += '<h3>10. ESTADO INTERNO DEL CASO</h3>';
-            html += '<div class="admin-card"><div class="admin-grid"><div>';
-            html += '<span class="admin-label">Total sospechosos</span>';
-            html += '<div class="admin-value">' + data.suspects.length + '</div>';
-            html += '<span class="admin-label">Total evidencias</span>';
-            html += '<div class="admin-value">' + data.evidences.length + '</div>';
-            html += '<span class="admin-label">Responsable</span>';
-            html += '<div class="admin-value">' + data.solution.responsible + '</div>';
-            html += '</div><div>';
-            html += '<span class="admin-label">Teorías falsas documentadas</span>';
-            html += '<div class="admin-value">' + data.false_theories.length + '</div>';
-            html += '<span class="admin-label">Pasos en ruta lógica</span>';
-            html += '<div class="admin-value">' + data.step_by_step.length + '</div>';
-            html += '<span class="admin-label">Conexiones en mapa</span>';
-            html += '<div class="admin-value">' + data.connections.length + ' líneas</div>';
-            html += '</div></div></div></div>';
-            return html;
+            var body = '<div class="admin-card"><div class="admin-grid"><div>';
+            body += '<span class="admin-label">Total sospechosos</span>';
+            body += '<div class="admin-value">' + data.suspects.length + '</div>';
+            body += '<span class="admin-label">Total evidencias</span>';
+            body += '<div class="admin-value">' + data.evidences.length + '</div>';
+            body += '<span class="admin-label">Responsable</span>';
+            body += '<div class="admin-value">' + data.solution.responsible + '</div>';
+            body += '</div><div>';
+            body += '<span class="admin-label">Teorías falsas documentadas</span>';
+            body += '<div class="admin-value">' + data.false_theories.length + '</div>';
+            body += '<span class="admin-label">Pasos en ruta lógica</span>';
+            body += '<div class="admin-value">' + data.step_by_step.length + '</div>';
+            body += '<span class="admin-label">Conexiones en mapa</span>';
+            body += '<div class="admin-value">' + data.connections.length + ' líneas</div>';
+            body += '</div></div></div>';
+            return adminAccordion('10. Estado interno del caso', body, false);
         }
 
         function resetCase(num) {

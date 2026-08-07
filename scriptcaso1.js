@@ -112,20 +112,28 @@ function openModal(id, cardEl, num) {
   var refEl = document.getElementById('modalSuspectRef');
   if (refEl) refEl.textContent = num || 'SUS-??';
 
+  overlay.__lastFocused = document.activeElement;
   overlay.classList.add('active');
   document.body.style.overflow = 'hidden';
+  var closeBtn = overlay.querySelector('.modal-close');
+  if (closeBtn) closeBtn.focus();
 }
 
 function closeModal() {
   var overlay = document.getElementById('modalOverlay');
   overlay.classList.remove('active');
   document.body.style.overflow = '';
+  if (overlay.__lastFocused && overlay.__lastFocused.focus) {
+    overlay.__lastFocused.focus();
+  }
 }
 
 /* ===== Vault ===== */
 function setupVault(evId) {
   var ev = getEvidencia(evId);
   if (!ev) return;
+
+  addEvidenceNav(evId);
 
   var vaultScreen = document.getElementById('vaultScreen');
   var contentArea = document.getElementById('evidenceContent');
@@ -173,6 +181,22 @@ function setupVault(evId) {
       if (e.key === 'Enter') { e.preventDefault(); tryUnlock(); }
     });
   }
+}
+
+function addEvidenceNav(evId) {
+  var total = 6;
+  var prev = evId > 1 ? evId - 1 : null;
+  var next = evId < total ? evId + 1 : null;
+  if (!prev && !next) return;
+  var contentArea = document.getElementById('evidenceContent');
+  if (!contentArea || !contentArea.parentNode) return;
+  var nav = document.createElement('div');
+  nav.className = 'evidence-nav';
+  var html = '';
+  if (prev) html += '<a href="evidencia' + prev + 'caso1.html" class="evidence-nav-btn">← Evidencia ' + prev + '</a>';
+  if (next) html += '<a href="evidencia' + next + 'caso1.html" class="evidence-nav-btn">Evidencia ' + next + ' →</a>';
+  nav.innerHTML = html;
+  contentArea.parentNode.appendChild(nav);
 }
 
 function showUnlockStamp() {
@@ -398,7 +422,7 @@ function renderDocumento(ev, container) {
       html += '<div class="wiki-highlight-box">';
       html += '<p>' + section.content.replace(/\n/g, '<br>') + '</p>';
       html += '</div>';
-    } else {
+    } else if (section.content) {
       html += '<p>' + section.content.replace(/\n/g, '<br>') + '</p>';
     }
     if (section.table) {
@@ -459,29 +483,7 @@ function renderDocumento(ev, container) {
   var pad = function(n) { return n < 10 ? '0' + n : n; };
   cctv.textContent = 'CAM-' + pad(1 + Math.floor(Math.random() * 8)) + '  ' + pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds());
   document.body.appendChild(cctv);
-
-  /* Typewriter effect on back-links */
-  setTimeout(function() {
-    var links = document.querySelectorAll('.back-link');
-    links.forEach(function(el) {
-      var txt = el.textContent;
-      el.textContent = '';
-      var i = 0;
-      (function type() {
-        if (i < txt.length) {
-          el.textContent += txt.charAt(i);
-          i++;
-          setTimeout(type, 30 + Math.random() * 20);
-        }
-      })();
-    });
-  }, 600);
 })();
-
-/* ===== Console easter egg ===== */
-console.log('%c[ARCHIVO DEL CASO]', 'color:#8b2020;font-weight:bold;font-size:13px;');
-console.log('%cExpediente N° 001 — Campus Digital', 'color:#5a4a2a;font-style:italic;font-size:11px;');
-console.log('%cNOTA: Revisar el salto de 40 minutos en la bit\u00e1cora de c\u00e1maras (Evidencia 3).', 'color:#2a1a0a;font-size:11px;');
 
 /* ===== Easter egg NOCHAP ===== */
 (function() {

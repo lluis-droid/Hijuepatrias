@@ -27,6 +27,11 @@
 
         <a href="expedientecaso1.html" class="back-link">← Volver al expediente</a>
 
+        <div class="evidence-progress" id="evidenceProgress" role="status" aria-live="polite">
+            <div class="evidence-progress-track"><div class="evidence-progress-fill" id="progressFill"></div></div>
+            <span class="evidence-progress-text" id="progressText">0 de 6 evidencias desbloqueadas</span>
+        </div>
+
         <div class="notebook-content">
             <div class="evidence-grid" id="evidenceGrid"></div>
         </div>
@@ -39,8 +44,11 @@
     <script>
         (function() {
             var grid = document.getElementById('evidenceGrid');
+            var total = CASO1.evidences.length;
+            var unlockedCount = 0;
             CASO1.evidences.forEach(function(ev) {
                 var unlocked = isUnlocked(ev.id);
+                if (unlocked) unlockedCount++;
                 var card = document.createElement('a');
                 card.className = 'evidence-card' + (unlocked ? ' unlocked' : ' locked');
                 card.href = 'evidencia' + ev.id + 'caso1.html';
@@ -50,6 +58,16 @@
                     '<span class="status-label' + (unlocked ? ' unlocked-label' : ' locked-label') + '">' + (unlocked ? 'Acceso concedido' : 'Sellada') + '</span>';
                 grid.appendChild(card);
             });
+            var fill = document.getElementById('progressFill');
+            var text = document.getElementById('progressText');
+            var pct = Math.round((unlockedCount / total) * 100);
+            fill.style.width = pct + '%';
+            if (unlockedCount === total) {
+                text.textContent = 'Investigación completa: las 6 evidencias están desbloqueadas.';
+                document.getElementById('evidenceProgress').classList.add('complete');
+            } else {
+                text.textContent = unlockedCount + ' de ' + total + ' evidencias desbloqueadas';
+            }
         })();
     </script>
 </body>
